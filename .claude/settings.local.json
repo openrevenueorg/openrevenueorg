@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm exec turbo run typecheck:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm --version:*)",
+      "Bash(node --version:*)",
+      "Bash(test:*)",
+      "Bash(./node_modules/.bin/turbo run:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(mkdir:*)",
+      "Bash(node -e:*)",
+      "Bash(npx tsx:*)",
+      "Bash(node scripts/generate-signing-key.js:*)",
+      "Bash(pnpm keys:generate:*)",
+      "Bash(pnpm db:init:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)",
+      "Bash(netstat:*)",
+      "Bash(curl:*)",
+      "Bash(API_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFiNWQ3Y2ZmMjJmMDJkNTVkZWZhOGMwMTA0YzA3OGFkIiwibmFtZSI6InRlc3Qta2V5LTEiLCJpYXQiOjE3NjIxMTAyMTcsImV4cCI6MTc2OTg4NjIxN30.dMvmj2CF6hNV-0RUox6a--XiJ3Yh5vPyBUYjAWZYSoo\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
