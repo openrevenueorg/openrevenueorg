@@ -3,8 +3,11 @@
  */
 
 import { randomBytes } from 'crypto';
-import { getActiveConnections, insertRevenueData, insertSyncLog } from '../database';
+import { getActiveConnections, insertRevenueData, insertSyncLog, getDatabase } from '../database';
+import { getConnectionCredentials } from '../api/connections';
+import { getProvider } from '../providers';
 import { logger } from '../utils/logger';
+import { promisify } from 'util';
 
 export async function syncAllConnections(): Promise<void> {
   const connections = await getActiveConnections();
@@ -27,11 +30,48 @@ async function syncConnection(connectionId: string): Promise<void> {
   try {
     logger.info(`Starting sync for connection ${connectionId}`);
 
-    // TODO: Implement actual sync logic with payment providers
-    // For now, this is a placeholder
+    // Get connection credentials
+    const credentials = await getConnectionCredentials(connectionId);
+    const provider = getProvider(credentials.provider);
 
-    // Simulated data processing
-    const recordsProcessed = 0;
+    // Fetch revenue data from the last 90 days
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 90);
+
+    const revenueData = await provider.fetchRevenue({
+      startDate,
+      endDate,
+      credentials: {
+        apiKey: credentials.apiKey,
+        webhookSecret: credentials.webhookSecret || '',
+      },
+    });
+
+    // Insert revenue data into database
+    let recordsProcessed = 0;
+    for (const data of revenueData) {
+      const id = randomBytes(16).toString('hex');
+      await insertRevenueData({
+        id,
+        connectionId,
+        date: data.date.toISOString(),
+        revenue: data.revenue,
+        mrr: data.mrr,
+        arr: data.mrr ? data.mrr * 12 : undefined,
+        customerCount: data.customerCount,
+        currency: data.currency,
+      });
+      recordsProcessed++;
+    }
+
+    // Update last synced time
+    const db = getDatabase();
+    const run = promisify(db.run.bind(db)) as (sql: string, params: any[]) => Promise<void>;
+    await run(
+      'UPDATE connections SET last_synced_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [connectionId]
+    );
 
     await insertSyncLog({
       id: logId,
@@ -42,7 +82,7 @@ async function syncConnection(connectionId: string): Promise<void> {
       completedAt: new Date().toISOString(),
     });
 
-    logger.info(`Sync completed for connection ${connectionId}`);
+    logger.info(`Sync completed for connection ${connectionId}. Processed ${recordsProcessed} records.`);
   } catch (error: any) {
     await insertSyncLog({
       id: logId,

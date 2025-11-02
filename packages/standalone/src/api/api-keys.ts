@@ -4,13 +4,16 @@
 
 import { Router, type Router as ExpressRouter } from 'express';
 import { createApiKey, listApiKeys, revokeApiKey } from '../services/api-keys';
+import { verifyAuth } from '../middleware/auth';
 
 export const apiKeysRouter: ExpressRouter = Router();
+
+// Apply authentication to all API key routes
+apiKeysRouter.use(verifyAuth);
 
 /**
  * POST /api-keys
  * Create a new API key
- * Note: This should be protected by admin authentication in production
  */
 apiKeysRouter.post('/', async (req, res, next) => {
   try {

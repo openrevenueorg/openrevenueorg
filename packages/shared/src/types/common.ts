@@ -17,6 +17,7 @@ export interface RevenueMetrics {
   arr: number;
   totalRevenue: number;
   customerCount: number;
+  growthRate: number;
   currency: Currency;
   timestamp: Date;
 }

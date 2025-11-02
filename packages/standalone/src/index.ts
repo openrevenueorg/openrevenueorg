@@ -8,6 +8,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
+import session from 'express-session';
 import { config } from './config';
 import { logger } from './utils/logger';
 import { apiRouter } from './api/routes';
@@ -20,11 +21,29 @@ async function bootstrap() {
   const app = express();
 
   // Security middleware
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: config.env === 'production' ? undefined : false,
+    })
+  );
   app.use(
     cors({
       origin: config.allowedOrigins,
       credentials: true,
+    })
+  );
+
+  // Session middleware
+  app.use(
+    session({
+      secret: config.sessionSecret,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: config.env === 'production',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      },
     })
   );
 
