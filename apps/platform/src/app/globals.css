@@ -1,8 +1,20 @@
-@tailwind base;
-@tailwind components;
+@import "tailwindcss" important;
+@config "../../tailwind.config.ts";
+
+/* @tailwind base; */
+/* @tailwind components; */
 @tailwind utilities;
 
+
 @layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -55,5 +67,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+
+@layer utilities {
+  .animate-spin {
+    animation: spin 1s linear infinite;
   }
 }
