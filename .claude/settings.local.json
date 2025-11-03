@@ -25,7 +25,15 @@
       "Bash(pnpm build:*)",
       "Bash(netstat:*)",
       "Bash(curl:*)",
-      "Bash(API_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFiNWQ3Y2ZmMjJmMDJkNTVkZWZhOGMwMTA0YzA3OGFkIiwibmFtZSI6InRlc3Qta2V5LTEiLCJpYXQiOjE3NjIxMTAyMTcsImV4cCI6MTc2OTg4NjIxN30.dMvmj2CF6hNV-0RUox6a--XiJ3Yh5vPyBUYjAWZYSoo\")"
+      "Bash(API_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFiNWQ3Y2ZmMjJmMDJkNTVkZWZhOGMwMTA0YzA3OGFkIiwibmFtZSI6InRlc3Qta2V5LTEiLCJpYXQiOjE3NjIxMTAyMTcsImV4cCI6MTc2OTg4NjIxN30.dMvmj2CF6hNV-0RUox6a--XiJ3Yh5vPyBUYjAWZYSoo\")",
+      "Bash(pnpm config:*)",
+      "Bash(pnpm dev)",
+      "Bash(../../node_modules/.bin/next dev:*)",
+      "Bash(npx next dev)",
+      "Bash(pnpm exec next dev:*)",
+      "Bash(for file in */route.ts)",
+      "Bash(do sed -i '/^\\/\\/ Force dynamic rendering for Next\\.js 15$/d; /^export const dynamic = .force-dynamic.;$/d' \"$file\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

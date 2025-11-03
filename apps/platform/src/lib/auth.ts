@@ -41,6 +41,7 @@ export const authConfig: NextAuthConfig = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   debug: process.env.NODE_ENV === 'development',
+  trustHost: true, // Required for Next.js 15+
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

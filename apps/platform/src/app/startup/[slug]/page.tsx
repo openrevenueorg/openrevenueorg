@@ -92,7 +92,7 @@ const mockData = {
       title: 'How We Reached $40k MRR in 18 Months',
       slug: 'how-we-reached-40k-mrr',
       excerpt:
-        'The journey from idea to $40k MRR wasn't straightforward. Here's what worked...',
+        "The journey from idea to $40k MRR wasn't straightforward. Here's what worked...",
       publishedAt: '2024-05-20',
     },
   ],
@@ -110,7 +110,7 @@ function formatCurrency(amount: number) {
 export default async function StartupPage({ params }: Props) {
   const { slug } = await params;
 
-  // TODO: Fetch startup data from database
+  //TODO: Fetch startup data from database
   // const startup = await getStartupBySlug(slug);
   // if (!startup) notFound();
 

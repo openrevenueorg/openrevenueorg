@@ -22,7 +22,12 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">OpenRevenue</h1>
+        <Link
+                    href="/"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    <h1 className="text-3xl font-bold"> OpenRevenue </h1>
+                  </Link>
           <p className="mt-2 text-muted-foreground">
             Sign in to your account
           </p>

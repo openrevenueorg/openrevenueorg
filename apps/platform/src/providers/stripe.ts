@@ -17,7 +17,7 @@ export class StripeProvider extends PaymentProvider {
   constructor(config: PaymentProviderConfig) {
     super(config, 'stripe');
     this.stripe = new Stripe(config.apiKey, {
-      apiVersion: '2025-02-24.acacia',
+      apiVersion: '2025-10-29.clover',
       typescript: true,
     });
   }
@@ -130,6 +130,7 @@ export class StripeProvider extends PaymentProvider {
         arr: mrr * 12,
         totalRevenue,
         customerCount,
+        growthRate: 0, // Growth rate requires historical data
         currency: 'USD',
         timestamp: new Date(),
       };
