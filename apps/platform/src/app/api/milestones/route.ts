@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { headers } from 'next/headers';
 
 
 const createMilestoneSchema = z.object({
@@ -14,7 +15,11 @@ const createMilestoneSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -51,7 +56,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

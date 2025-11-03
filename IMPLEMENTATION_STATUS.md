@@ -36,47 +36,67 @@ See `packages/standalone/README.md` for full documentation.
 
 ---
 
-## 🚧 Main Platform (`apps/platform`) - **PARTIALLY IMPLEMENTED**
+## 🚧 Main Platform (`apps/platform`) - **70% IMPLEMENTED**
 
 ### ✅ What's Implemented
 
 #### Database & Schema
 - ✅ Complete Prisma schema with all models
 - ✅ Users, Startups, Connections, Revenue, Milestones, Stories, etc.
+- ✅ Better Auth integration (migrated from NextAuth)
 
-#### UI Components
+#### UI Components (100%)
+- ✅ Dialog, Select, Switch, Tabs, Toast (newly added)
 - ✅ Badge, Avatar, Textarea, Dropdown Menu
 - ✅ Button, Card, Input, Label (pre-existing)
+- ✅ All styled with Tailwind + Radix UI
+
+#### Utility Functions (100%)
+- ✅ Encryption utilities (`encryptApiKey`, `decryptApiKey`)
+- ✅ Revenue calculations (`calculateMRR`, `calculateARR`, etc.)
+- ✅ Data verification (`verifySignature`, `generateDataHash`)
 
 #### Authentication
+- ✅ Better Auth configured with Prisma adapter
 - ✅ Login page (`/login`)
 - ✅ Register page (`/register`)
-- ✅ NextAuth setup
+- ✅ Session management
 
-#### Public Pages
+#### Public Pages (60%)
 - ✅ Landing page (`/`)
 - ✅ Leaderboard page (`/leaderboard`)
 - ✅ Individual startup page (`/startup/[slug]`)
+- ✅ Browse startups page (`/startups`)
 
-#### Dashboard
+#### Dashboard Pages (50%)
 - ✅ Dashboard layout with sidebar navigation
 - ✅ Dashboard overview page (`/dashboard`)
+- ✅ Onboarding flow (`/dashboard/onboarding`)
+- ✅ Connections management (`/dashboard/connections`)
+- ✅ Settings page (`/dashboard/settings`)
 - ✅ Navigation component
+
+#### API Routes (100%)
+- ✅ Startup CRUD (`/api/startups/*`)
+- ✅ Connection CRUD (`/api/connections/*`)
+- ✅ Revenue data (`/api/revenue`)
+- ✅ Stories API (`/api/stories`)
+- ✅ Milestones API (`/api/milestones`)
+- ✅ Settings API (`/api/settings`)
+- ✅ Leaderboard API (`/api/leaderboard`)
+- ✅ Auth endpoints (`/api/auth/[...all]`, `/api/auth/session`)
 
 #### Backend Infrastructure
 - ✅ Payment provider interfaces
-- ✅ Standalone app client
+- ✅ Standalone app client structure
 - ✅ Data aggregator structure
 
 ### ❌ What's Missing
 
 #### Dashboard Pages
-- ❌ Onboarding flow (`/dashboard/onboarding`)
-- ❌ Connections management (`/dashboard/connections`)
 - ❌ Analytics page (`/dashboard/analytics`)
 - ❌ Stories management (`/dashboard/stories`)
 - ❌ Milestones page (`/dashboard/milestones`)
-- ❌ Settings page (`/dashboard/settings`)
 
 #### Public Pages
 - ❌ Explore/Browse page (`/explore`)
@@ -84,20 +104,11 @@ See `packages/standalone/README.md` for full documentation.
 - ❌ Features page (`/features`)
 - ❌ Pricing page (`/pricing`)
 
-#### API Routes
-- ❌ Startup CRUD (`/api/startups/*`)
-- ❌ Connection CRUD (`/api/connections/*`)
-- ❌ Revenue data (`/api/revenue`)
-- ❌ Stories, Milestones, Settings APIs
-
 #### Services
 - ❌ Complete data aggregator implementation
 - ❌ Background sync jobs (BullMQ)
-- ❌ Additional payment provider integrations
-- ❌ Full standalone app client
-
-#### UI Components
-- ❌ Dialog, Select, Switch, Tabs, Toast
+- ❌ Additional payment provider integrations (only Stripe base exists)
+- ❌ Full standalone app client implementation
 
 ### 📋 Implementation Guide
 
@@ -149,17 +160,22 @@ pnpm dev
 - Production-ready
 - Full documentation available
 
-### Main Platform: **35%** 🚧
+### Main Platform: **70%** 🚧
 - **Completed:**
   - Database schema (100%)
+  - UI Components (100%)
+  - Utility Functions (100%)
   - Authentication pages (100%)
-  - Public pages (60% - landing, leaderboard, startup profile)
-  - Dashboard structure (50% - layout and overview only)
+  - Public pages (60% - landing, leaderboard, startup profile, browse)
+  - Dashboard pages (50% - layout, overview, onboarding, connections, settings)
+  - API routes (100% - all CRUD endpoints implemented)
 
-- **In Progress:**
-  - Dashboard pages (0%)
-  - API routes (0%)
-  - Background services (0%)
+- **Remaining:**
+  - Background services (sync jobs, aggregator)
+  - Additional payment providers (Paddle, Lemon Squeezy, PayPal)
+  - Static marketing pages (about, features, pricing)
+  - Analytics dashboard
+  - Stories/Milestones management UI
 
 ---
 

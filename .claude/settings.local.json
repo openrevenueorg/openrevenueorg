@@ -33,7 +33,9 @@
       "Bash(pnpm exec next dev:*)",
       "Bash(for file in */route.ts)",
       "Bash(do sed -i '/^\\/\\/ Force dynamic rendering for Next\\.js 15$/d; /^export const dynamic = .force-dynamic.;$/d' \"$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "WebFetch(domain:better-auth.com)",
+      "Bash(lsof:*)"
     ],
     "deny": [],
     "ask": []

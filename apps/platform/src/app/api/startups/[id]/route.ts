@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { headers } from 'next/headers';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -10,7 +11,11 @@ interface RouteParams {
 export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
 
     const startup = await prisma.startup.findUnique({
       where: { id },
@@ -24,6 +29,9 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
             provider: true,
             isActive: true,
             lastSyncedAt: true,
+            trustLevel: true,
+            verificationMethod: true,
+            lastVerifiedAt: true,
           },
         },
       },
@@ -38,7 +46,12 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    return NextResponse.json(startup);
+    // Determine overall trust level (use highest available)
+    const overallTrustLevel = startup.connections.some(c => c.trustLevel === 'PLATFORM_VERIFIED')
+      ? 'PLATFORM_VERIFIED'
+      : 'SELF_REPORTED';
+
+    return NextResponse.json({ ...startup, overallTrustLevel });
   } catch (error) {
     console.error('Error fetching startup:', error);
     return NextResponse.json(
@@ -52,7 +65,11 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -92,7 +109,11 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

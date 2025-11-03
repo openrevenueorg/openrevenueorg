@@ -1,4 +1,7 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,23 +14,59 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-export const metadata: Metadata = {
-  title: 'Login | OpenRevenue',
-  description: 'Sign in to your OpenRevenue account',
-};
+import { signIn } from '@/lib/auth-client';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const { data, error: signInError } = await signIn.email({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError('Invalid email or password');
+      } else if (data) {
+        router.push('/dashboard');
+        router.refresh();
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOAuthSignIn = async (provider: 'google' | 'github') => {
+    setLoading(true);
+    try {
+      await signIn.social({
+        provider,
+        callbackURL: '/dashboard',
+      });
+    } catch (err) {
+      setError('Failed to sign in with ' + provider);
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-        <Link
-                    href="/"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    <h1 className="text-3xl font-bold"> OpenRevenue </h1>
-                  </Link>
+          <Link href="/" className="text-sm text-primary hover:underline">
+            <h1 className="text-3xl font-bold"> OpenRevenue </h1>
+          </Link>
           <p className="mt-2 text-muted-foreground">
             Sign in to your account
           </p>
@@ -41,14 +80,23 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -61,10 +109,17 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
               </div>
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
 
@@ -80,7 +135,12 @@ export default function LoginPage() {
             </div>
 
             <div className="grid gap-2">
-              <Button variant="outline" type="button">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => handleOAuthSignIn('google')}
+                disabled={loading}
+              >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
                     fill="currentColor"
@@ -101,7 +161,12 @@ export default function LoginPage() {
                 </svg>
                 Google
               </Button>
-              <Button variant="outline" type="button">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => handleOAuthSignIn('github')}
+                disabled={loading}
+              >
                 <svg
                   className="mr-2 h-4 w-4"
                   fill="currentColor"

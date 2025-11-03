@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { TrustBadge } from '@/components/ui/trust-badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TrendingUp, Trophy, Users, DollarSign } from 'lucide-react';
 
@@ -24,6 +25,8 @@ const startups = [
     customers: 890,
     growthRate: 25.3,
     currency: 'USD',
+    trustLevel: 'PLATFORM_VERIFIED' as const,
+    verificationMethod: 'Direct Stripe Integration',
   },
   {
     id: '2',
@@ -37,6 +40,8 @@ const startups = [
     customers: 654,
     growthRate: 18.7,
     currency: 'USD',
+    trustLevel: 'PLATFORM_VERIFIED' as const,
+    verificationMethod: 'Direct Paddle Integration',
   },
   {
     id: '3',
@@ -50,6 +55,8 @@ const startups = [
     customers: 523,
     growthRate: 31.2,
     currency: 'USD',
+    trustLevel: 'SELF_REPORTED' as const,
+    verificationMethod: 'Self-Hosted Application',
   },
   // Add more mock startups...
 ];
@@ -68,7 +75,7 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center justify-between">
             <Link href="/" className="font-bold text-2xl">
@@ -109,6 +116,12 @@ export default function LeaderboardPage() {
         <div className="flex gap-2 mb-8 flex-wrap">
           <Badge variant="default" className="cursor-pointer">
             All
+          </Badge>
+          <Badge variant="outline" className="cursor-pointer">
+            Verified Only
+          </Badge>
+          <Badge variant="outline" className="cursor-pointer">
+            Self-Reported
           </Badge>
           <Badge variant="outline" className="cursor-pointer">
             SaaS
@@ -155,7 +168,15 @@ export default function LeaderboardPage() {
                         <AvatarFallback>{startup.name[0]}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-semibold">{startup.name}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="font-semibold">{startup.name}</div>
+                          {startup.trustLevel && (
+                            <TrustBadge 
+                              trustLevel={startup.trustLevel}
+                              size="sm"
+                            />
+                          )}
+                        </div>
                         <div className="text-sm text-muted-foreground">
                           {startup.category}
                         </div>

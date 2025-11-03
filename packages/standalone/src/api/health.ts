@@ -4,6 +4,7 @@
 
 import { Router, type Router as ExpressRouter } from 'express';
 import { getLastSyncTime } from '../database';
+import { getPublicKey } from '../services/crypto';
 import type { HealthStatus } from '@openrevenue/shared';
 
 export const healthRouter: ExpressRouter = Router();
@@ -32,6 +33,8 @@ healthRouter.get('/', async (req, res) => {
         status === 'degraded'
           ? 'Data sync is overdue'
           : undefined,
+      publicKey: getPublicKey(),
+      timestamp: Date.now(),
     };
 
     res.json(response);

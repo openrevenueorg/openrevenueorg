@@ -8,6 +8,7 @@ import type {
   HealthStatus,
   DataSignature,
 } from '@openrevenue/shared';
+import { verifySignature as verifyEd25519, isDataStale } from '@/lib/verification';
 
 export interface StandaloneClientConfig {
   endpoint: string;
@@ -67,7 +68,7 @@ export class StandaloneClient {
    */
   async fetchSignedRevenue(
     request: FetchRevenueRequest
-  ): Promise<DataSignature> {
+  ): Promise<RevenueDataPoint[]> {
     const response = await this.makeRequest<DataSignature>(
       '/api/v1/revenue/signed',
       {
@@ -76,15 +77,19 @@ export class StandaloneClient {
       }
     );
 
-    // Verify signature if public key is available
-    if (this.config.publicKey) {
-      const isValid = this.verifySignature(response);
-      if (!isValid) {
-        throw new Error('Data signature verification failed');
-      }
+    // Verify signature
+    if (!this.verifySignature(response)) {
+      throw new Error('Signature verification failed - data may be forged');
+    }
+    
+    // Warn if signature is stale
+    if (isDataStale(response.timestamp, 10)) {
+      const ageMinutes = Math.floor((Date.now() - response.timestamp) / 60000);
+      console.warn(`Signature is ${ageMinutes} minutes old`);
     }
 
-    return response;
+    // Parse and return data
+    return JSON.parse(response.data);
   }
 
   /**
@@ -116,12 +121,27 @@ export class StandaloneClient {
   }
 
   /**
-   * Verify cryptographic signature
+   * Verify cryptographic signature using Ed25519
    */
   private verifySignature(signedData: DataSignature): boolean {
-    // TODO: Implement actual signature verification
-    // This would use the publicKey to verify the signature
-    // For now, return true as placeholder
-    return true;
+    try {
+      // Use stored public key if available, fallback to response key
+      const publicKey = this.config.publicKey || signedData.publicKey;
+      
+      if (!publicKey) {
+        console.error('No public key available for verification');
+        return false;
+      }
+      
+      // Verify Ed25519 signature
+      return verifyEd25519(
+        signedData.data,
+        signedData.signature,
+        publicKey
+      );
+    } catch (error) {
+      console.error('Signature verification error:', error);
+      return false;
+    }
   }
 }

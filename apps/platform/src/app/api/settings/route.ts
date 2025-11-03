@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-
+import { headers } from 'next/headers';
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -30,7 +34,11 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const session = await auth();
+    //const session = await auth();
+    //const session = (await auth.$context).session;
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

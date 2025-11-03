@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DashboardNav } from '@/components/dashboard-nav';
 import { Bell, Menu } from 'lucide-react';
+import { signOut } from '@/lib/auth-client';
 
 export const metadata: Metadata = {
   title: 'Dashboard | OpenRevenue',
@@ -60,7 +61,7 @@ export default function DashboardLayout({
                     <Link href="/dashboard/billing">Billing</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={async() => await signOut()} >
                     Log out
                   </DropdownMenuItem>
                 </DropdownMenuContent>

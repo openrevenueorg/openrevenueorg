@@ -6,6 +6,7 @@
 import { prisma } from '@/lib/prisma';
 import { createProvider } from '@/providers';
 import { StandaloneClient } from '@/standalone/client';
+import { decryptApiKey } from '@/lib/encryption';
 import type { RevenueDataPoint, RevenueMetrics } from '@openrevenue/shared';
 
 export interface SyncResult {
@@ -98,12 +99,16 @@ export class DataAggregator {
             sourceType: connection.type,
             sourceId: connection.id,
             isVerified: connection.type === 'standalone', // Standalone data is cryptographically verified
+            trustLevel: connection.trustLevel || 'SELF_REPORTED',
+            verifiedBy: connection.type === 'direct' ? 'platform' : 'self',
           },
           update: {
             revenue: point.revenue,
             mrr: point.mrr,
             customerCount: point.customerCount,
             currency: point.currency,
+            trustLevel: connection.trustLevel || 'SELF_REPORTED',
+            verifiedBy: connection.type === 'direct' ? 'platform' : 'self',
           },
         });
         recordsProcessed++;
@@ -174,13 +179,13 @@ export class DataAggregator {
       throw new Error('API key not configured');
     }
 
-    // Decrypt API key (in production, use proper encryption)
-    const apiKey = this.decryptApiKey(connection.encryptedApiKey);
+    // Decrypt API key
+    const apiKey = this.decryptKey(connection.encryptedApiKey);
 
     const provider = createProvider(connection.provider, {
       apiKey,
       apiSecret: connection.encryptedSecret
-        ? this.decryptApiKey(connection.encryptedSecret)
+        ? this.decryptKey(connection.encryptedSecret)
         : undefined,
     });
 
@@ -236,12 +241,15 @@ export class DataAggregator {
   }
 
   /**
-   * Decrypt API key (placeholder - implement proper encryption in production)
+   * Decrypt API key using AES-256-GCM
    */
-  private decryptApiKey(encrypted: string): string {
-    // TODO: Implement proper AES-256-GCM decryption
-    // For now, return as-is for development
-    return encrypted;
+  private decryptKey(encrypted: string): string {
+    try {
+      return decryptApiKey(encrypted);
+    } catch (error) {
+      console.error('Error decrypting API key:', error);
+      throw new Error('Failed to decrypt API credentials');
+    }
   }
 
   /**

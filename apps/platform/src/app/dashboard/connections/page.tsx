@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { TrustBadge } from '@/components/ui/trust-badge';
 import { Plus, Trash2, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 const connectionSchema = z.object({
@@ -39,6 +40,9 @@ interface ConnectionData {
   isActive: boolean;
   lastSyncedAt?: string;
   lastSyncStatus?: string;
+  trustLevel?: 'PLATFORM_VERIFIED' | 'SELF_REPORTED';
+  verificationMethod?: string;
+  lastVerifiedAt?: string;
   createdAt: string;
 }
 
@@ -341,12 +345,19 @@ export default function ConnectionsPage() {
             <Card key={connection.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <CardTitle className="flex items-center gap-2 mb-2">
                       {connection.name}
                       <Badge variant={connection.isActive ? 'default' : 'secondary'}>
                         {connection.isActive ? 'Active' : 'Inactive'}
                       </Badge>
+                      {connection.trustLevel && (
+                        <TrustBadge 
+                          trustLevel={connection.trustLevel}
+                          verificationMethod={connection.verificationMethod}
+                          size="sm"
+                        />
+                      )}
                     </CardTitle>
                     <CardDescription>
                       {connection.type === 'direct' ? (

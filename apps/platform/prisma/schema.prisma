@@ -12,13 +12,14 @@ datasource db {
 // ===== Authentication & Users =====
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  emailVerified DateTime?
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  emailVerifiedAt DateTime?
   name          String?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   accounts Account[]
   sessions Session[]
@@ -28,31 +29,40 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  id                   String    @id @default(cuid())
+  userId               String
+  type                 String?
+  accountId            String // Better Auth uses accountId instead of providerAccountId
+  providerId           String // Better Auth uses providerId instead of provider
+  refreshToken         String?   @db.Text
+  accessToken          String?   @db.Text
+  accessTokenExpiresAt DateTime? // Better Auth uses DateTime instead of Int
+  idToken              String?   @db.Text
+  scope                String?
+  password             String? // For email/password authentication
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  expiresAt            DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  refreshTokenExpiresAt DateTime?
+
+  @@unique([providerId, accountId])
   @@map("accounts")
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  token     String   @unique // Better Auth uses token instead of sessionToken
+  userId    String
+  expiresAt DateTime // Better Auth uses expiresAt instead of expires
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -69,28 +79,28 @@ model VerificationToken {
 // ===== Startups & Profiles =====
 
 model Startup {
-  id            String    @id @default(cuid())
-  slug          String    @unique
-  name          String
-  description   String?   @db.Text
-  website       String?
-  logo          String?
-  categoryId    String?
-  foundedDate   DateTime?
-  isPublished   Boolean   @default(false)
-  isFeatured    Boolean   @default(false)
-  userId        String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?   @db.Text
+  website     String?
+  logo        String?
+  categoryId  String?
+  foundedDate DateTime?
+  isPublished Boolean   @default(false)
+  isFeatured  Boolean   @default(false)
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category        Category?         @relation(fields: [categoryId], references: [id])
-  privacySettings PrivacySettings?
-  connections     DataConnection[]
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category         Category?         @relation(fields: [categoryId], references: [id])
+  privacySettings  PrivacySettings?
+  connections      DataConnection[]
   revenueSnapshots RevenueSnapshot[]
-  milestones      Milestone[]
-  stories         Story[]
-  achievements    Achievement[]
+  milestones       Milestone[]
+  stories          Story[]
+  achievements     Achievement[]
 
   @@index([userId])
   @@index([categoryId])
@@ -100,12 +110,12 @@ model Startup {
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
   description String?
   icon        String?
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
 
   startups Startup[]
 
@@ -113,14 +123,14 @@ model Category {
 }
 
 model PrivacySettings {
-  id                 String   @id @default(cuid())
-  startupId          String   @unique
-  showRevenue        String   @default("public") // public, range, hidden
-  showMRR            String   @default("public")
-  showCustomerCount  String   @default("public")
-  showGrowthRate     Boolean  @default(true)
-  historicalMonths   Int      @default(12)
-  updatedAt          DateTime @updatedAt
+  id                String   @id @default(cuid())
+  startupId         String   @unique
+  showRevenue       String   @default("public") // public, range, hidden
+  showMRR           String   @default("public")
+  showCustomerCount String   @default("public")
+  showGrowthRate    Boolean  @default(true)
+  historicalMonths  Int      @default(12)
+  updatedAt         DateTime @updatedAt
 
   startup Startup @relation(fields: [startupId], references: [id], onDelete: Cascade)
 
@@ -129,68 +139,84 @@ model PrivacySettings {
 
 // ===== Data Connections =====
 
+enum TrustLevel {
+  SELF_REPORTED
+  PLATFORM_VERIFIED
+}
+
 model DataConnection {
-  id                String    @id @default(cuid())
-  startupId         String
-  type              String    // direct, standalone
-  provider          String    // stripe, paddle, lemon_squeezy, paypal
-  name              String    // User-friendly name for this connection
+  id        String @id @default(cuid())
+  startupId String
+  type      String // direct, standalone
+  provider  String // stripe, paddle, lemon_squeezy, paypal
+  name      String // User-friendly name for this connection
 
   // For direct integrations
-  encryptedApiKey   String?   @db.Text
-  encryptedSecret   String?   @db.Text
+  encryptedApiKey String? @db.Text
+  encryptedSecret String? @db.Text
 
   // For standalone app integrations
-  endpoint          String?
-  standaloneApiKey  String?   @db.Text
-  publicKey         String?   @db.Text // For verifying signatures
+  endpoint         String?
+  standaloneApiKey String? @db.Text
+  publicKey        String? @db.Text // For verifying signatures
 
-  isActive          Boolean   @default(true)
-  lastSyncedAt      DateTime?
-  lastSyncStatus    String?   // success, error, pending
-  lastSyncError     String?   @db.Text
+  // Trust level fields
+  trustLevel       TrustLevel @default(SELF_REPORTED)
+  verificationMethod String?
+  lastVerifiedAt   DateTime?
 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  isActive       Boolean   @default(true)
+  lastSyncedAt   DateTime?
+  lastSyncStatus String? // success, error, pending
+  lastSyncError  String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   startup Startup @relation(fields: [startupId], references: [id], onDelete: Cascade)
 
   @@index([startupId])
   @@index([isActive])
+  @@index([trustLevel])
   @@map("data_connections")
 }
 
 // ===== Revenue Data =====
 
 model RevenueSnapshot {
-  id            String   @id @default(cuid())
-  startupId     String
-  date          DateTime @db.Date
+  id        String   @id @default(cuid())
+  startupId String
+  date      DateTime @db.Date
 
   // Core metrics
   revenue       Float
   mrr           Float?
   arr           Float?
   customerCount Int?
-  currency      String   @default("USD")
+  currency      String @default("USD")
 
   // Growth metrics
-  growthRate    Float?   // Month-over-month growth percentage
-  churnRate     Float?
+  growthRate Float? // Month-over-month growth percentage
+  churnRate  Float?
 
   // Metadata
-  sourceType    String   // direct, standalone
-  sourceId      String?  // connection ID
-  dataHash      String?  // For detecting duplicates
-  isVerified    Boolean  @default(false)
+  sourceType String // direct, standalone
+  sourceId   String? // connection ID
+  dataHash   String? // For detecting duplicates
+  isVerified Boolean @default(false)
 
-  createdAt     DateTime @default(now())
+  // Trust level fields
+  trustLevel TrustLevel @default(SELF_REPORTED)
+  verifiedBy String? // "platform", "self", etc.
+
+  createdAt DateTime @default(now())
 
   startup Startup @relation(fields: [startupId], references: [id], onDelete: Cascade)
 
   @@unique([startupId, date, sourceId])
   @@index([startupId])
   @@index([date])
+  @@index([trustLevel])
   @@map("revenue_snapshots")
 }
 
@@ -199,7 +225,7 @@ model RevenueSnapshot {
 model Milestone {
   id          String    @id @default(cuid())
   startupId   String
-  type        String    // mrr_milestone, customer_milestone, custom
+  type        String // mrr_milestone, customer_milestone, custom
   title       String
   description String?   @db.Text
   targetValue Float?
@@ -214,15 +240,15 @@ model Milestone {
 }
 
 model Story {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   startupId   String
   title       String
-  content     String   @db.Text
+  content     String    @db.Text
   slug        String
-  isPublished Boolean  @default(false)
+  isPublished Boolean   @default(false)
   publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   startup Startup @relation(fields: [startupId], references: [id], onDelete: Cascade)
 
@@ -235,7 +261,7 @@ model Story {
 model Achievement {
   id          String   @id @default(cuid())
   startupId   String
-  type        String   // early_adopter, consistent_growth, transparency_champion
+  type        String // early_adopter, consistent_growth, transparency_champion
   title       String
   description String?
   earnedAt    DateTime @default(now())
@@ -250,6 +276,7 @@ model Achievement {
 // ===== Leaderboard & Analytics =====
 
 // Materialized view for leaderboard (refreshed hourly)
+
 model LeaderboardEntry {
   id            String   @id @default(cuid())
   startupId     String   @unique
@@ -269,15 +296,26 @@ model LeaderboardEntry {
 // ===== Background Jobs & Logs =====
 
 model SyncLog {
-  id              String   @id @default(cuid())
-  connectionId    String
-  status          String   // success, error, pending
+  id               String    @id @default(cuid())
+  connectionId     String
+  status           String // success, error, pending
   recordsProcessed Int?
-  error           String?  @db.Text
-  startedAt       DateTime @default(now())
-  completedAt     DateTime?
+  error            String?   @db.Text
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
 
   @@index([connectionId])
   @@index([status])
   @@map("sync_logs")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
 }

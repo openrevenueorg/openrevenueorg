@@ -1698,7 +1698,111 @@ function displayRevenue(amount: number, mode: string): string {
 }
 ```
 
-### 7.3 Compliance
+### 7.3 Data Verification & Trust Levels
+
+OpenRevenue implements a comprehensive trust-based verification system that distinguishes between independently verified data and self-reported information.
+
+#### 7.3.1 Trust Level System
+
+The platform uses a two-tier trust system to classify revenue data sources:
+
+**PLATFORM_VERIFIED:**
+- Direct integration with payment processors (Stripe, Paddle, etc.)
+- Platform fetches data directly from provider APIs
+- Cannot be forged or manipulated by users
+- Automatically marked when connection type is 'direct'
+- Recommended for public leaderboard visibility
+- Full cryptographic integrity maintained
+
+**SELF_REPORTED:**
+- Data from user's self-hosted standalone application
+- Cryptographically signed with Ed25519 signatures
+- User has full control over data generation
+- Useful for privacy-conscious startups
+- Clearly marked with warning indicators
+- Cryptographic verification ensures data came from user's app
+
+#### 7.3.2 Cryptographic Signature Verification
+
+**Standalone App Signing Process:**
+1. User's standalone app generates Ed25519 key pair on first run
+2. Private key stored securely on user's server
+3. Public key shared with platform during connection setup
+4. Revenue data signed using NaCl (TweetNaCl) library
+5. Signature includes timestamp for freshness validation
+
+**Platform Verification Process:**
+1. Fetch public key from standalone app health endpoint
+2. Store public key with connection record
+3. Request signed data from `/api/v1/revenue/signed` endpoint
+4. Verify Ed25519 signature using stored public key
+5. Check timestamp freshness (default: 10 minutes)
+6. Hash validation ensures data integrity
+
+**Implementation Details:**
+- Uses Ed25519 curve cryptography (via TweetNaCl)
+- Base64 encoded signatures and keys
+- SHA-256 hashing for data integrity
+- Timestamp included in signature
+- Signature verification happens before data acceptance
+
+#### 7.3.3 Trust Level Display
+
+**Trust Badge Component:**
+```typescript
+<TrustBadge 
+  trustLevel="PLATFORM_VERIFIED"
+  verificationMethod="Direct Stripe Integration"
+  size="md"
+/>
+```
+
+**Visual Indicators:**
+- **Verified**: Green badge with checkmark icon
+- **Self-Reported**: Yellow badge with info icon
+- Warning messages on self-reported data
+- Filter options on leaderboard
+- Clear distinction in UI components
+
+**Public Leaderboard:**
+- Default view shows all startups
+- Filter tabs: All | Verified Only | Self-Reported
+- Trust badges on each entry
+- Sorting preference for verified startups
+
+**Startup Profile Pages:**
+- Large trust badge in header
+- Detailed verification information
+- Warning box for self-reported data
+- Last verified timestamp display
+
+#### 7.3.4 Limitations & Transparency
+
+**Important Disclaimers:**
+
+While the platform provides robust cryptographic verification for self-reported data, users should understand:
+
+1. **Self-Reported Data**: Cryptographic signatures only prove data came from the user's app, not that the data itself is truthful
+2. **User Control**: Standalone app owners can modify code or database to report any values
+3. **Transparency**: All trust levels are clearly displayed to prevent confusion
+4. **Recommendation**: For public credibility, use platform-verified direct integrations
+
+**Benefits of Each Approach:**
+
+**Platform Verified:**
+- Unforgeable data
+- Public credibility
+- Automatic updates
+- Real-time accuracy
+
+**Self-Reported:**
+- Complete data sovereignty
+- No API key sharing
+- Privacy-focused
+- Cryptographically attested
+- Custom processing rules
+
+### 7.4 Compliance
 
 **GDPR Compliance:**
 - Right to access data

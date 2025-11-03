@@ -69,7 +69,8 @@ async function main() {
       create: {
         email: 'demo@openrevenue.org',
         name: 'Demo User',
-        emailVerified: new Date(),
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
       },
     });
 

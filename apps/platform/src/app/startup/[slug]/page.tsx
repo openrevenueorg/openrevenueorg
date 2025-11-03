@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { TrustBadge } from '@/components/ui/trust-badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -13,6 +14,7 @@ import {
   Globe,
   ExternalLink,
   Shield,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   LineChart,
@@ -57,6 +59,9 @@ const mockData = {
     customers: 890,
     growthRate: 25.3,
     currency: 'USD',
+    trustLevel: 'PLATFORM_VERIFIED' as const,
+    verificationMethod: 'Direct Stripe Integration',
+    lastVerifiedAt: '2024-01-15',
   },
   revenueHistory: [
     { month: 'Jan', mrr: 28000, revenue: 28000 },
@@ -149,14 +154,39 @@ export default async function StartupPage({ params }: Props) {
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-4xl font-bold">{startup.name}</h1>
                 <Badge variant="secondary">{startup.category}</Badge>
-                <Badge variant="outline" className="gap-1">
-                  <Shield className="h-3 w-3" />
-                  Verified
-                </Badge>
+                {startup.trustLevel && (
+                  <TrustBadge 
+                    trustLevel={startup.trustLevel} 
+                    verificationMethod={startup.verificationMethod}
+                    size="lg"
+                  />
+                )}
               </div>
               <p className="text-lg text-muted-foreground mb-4">
                 {startup.description}
               </p>
+              {startup.trustLevel === 'SELF_REPORTED' && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
+                  <div className="flex gap-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5" />
+                    <div>
+                      <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
+                        Self-Reported Data
+                      </div>
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        This startup's revenue data is self-reported through their standalone app.
+                        While cryptographically signed, the data has not been independently verified
+                        by the platform.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {startup.trustLevel === 'PLATFORM_VERIFIED' && startup.lastVerifiedAt && (
+                <div className="text-sm text-muted-foreground mb-4">
+                  Last verified: {new Date(startup.lastVerifiedAt).toLocaleDateString()} • {startup.verificationMethod}
+                </div>
+              )}
               <div className="flex gap-4 items-center text-sm text-muted-foreground">
                 {startup.website && (
                   <a

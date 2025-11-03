@@ -4,6 +4,9 @@
 
 import { PaymentProvider, type PaymentProviderConfig } from './base';
 import { StripeProvider } from './stripe';
+import { PaddleProvider } from './paddle';
+import { LemonSqueezyProvider } from './lemonsqueezy';
+import { PayPalProvider } from './paypal';
 import type { PaymentProvider as PaymentProviderType } from '@openrevenue/shared';
 
 export { PaymentProvider, type PaymentProviderConfig };
@@ -17,13 +20,13 @@ export function createProvider(
       return new StripeProvider(config);
 
     case 'paddle':
-      throw new Error('Paddle provider not yet implemented');
+      return new PaddleProvider(config);
 
     case 'lemon_squeezy':
-      throw new Error('Lemon Squeezy provider not yet implemented');
+      return new LemonSqueezyProvider(config);
 
     case 'paypal':
-      throw new Error('PayPal provider not yet implemented');
+      return new PayPalProvider(config);
 
     default:
       throw new Error(`Unsupported payment provider: ${provider}`);

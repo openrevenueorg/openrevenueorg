@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { encryptApiKey } from '@/lib/encryption';
 import { z } from 'zod';
+import { headers } from 'next/headers';
 
 
 const createConnectionSchema = z.object({
@@ -21,7 +22,10 @@ const createConnectionSchema = z.object({
 // POST /api/connections
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    //const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+  });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -47,6 +51,15 @@ export async function POST(req: NextRequest) {
       name: data.name,
     };
 
+    // Set trust level based on connection type
+    const trustLevel = data.type === 'direct' 
+      ? 'PLATFORM_VERIFIED' 
+      : 'SELF_REPORTED';
+
+    const verificationMethod = data.type === 'direct'
+      ? `Direct ${data.provider.charAt(0).toUpperCase() + data.provider.slice(1)} Integration`
+      : 'Self-Hosted Application';
+
     if (data.type === 'direct') {
       if (data.apiKey) encryptedData.encryptedApiKey = encryptApiKey(data.apiKey);
       if (data.secret) encryptedData.encryptedSecret = encryptApiKey(data.secret);
@@ -55,10 +68,30 @@ export async function POST(req: NextRequest) {
       if (data.standaloneApiKey) {
         encryptedData.standaloneApiKey = encryptApiKey(data.standaloneApiKey);
       }
+      
+      // For standalone apps, fetch public key
+      if (data.endpoint) {
+        try {
+          const response = await fetch(`${data.endpoint}/api/v1/health`, {
+            headers: { 'X-API-Key': data.standaloneApiKey || '' }
+          });
+          const healthData = await response.json();
+          if (healthData.publicKey) {
+            encryptedData.publicKey = healthData.publicKey;
+          }
+        } catch (error) {
+          console.warn('Could not fetch public key from standalone app:', error);
+        }
+      }
     }
 
     const connection = await prisma.dataConnection.create({
-      data: encryptedData,
+      data: {
+        ...encryptedData,
+        trustLevel,
+        verificationMethod,
+        lastVerifiedAt: data.type === 'direct' ? new Date() : null,
+      },
     });
 
     return NextResponse.json(connection);
@@ -80,7 +113,10 @@ export async function POST(req: NextRequest) {
 // GET /api/connections?startupId=xxx
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
+    //const session = await auth();
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -116,6 +152,9 @@ export async function GET(req: NextRequest) {
         isActive: true,
         lastSyncedAt: true,
         lastSyncStatus: true,
+        trustLevel: true,
+        verificationMethod: true,
+        lastVerifiedAt: true,
         createdAt: true,
         // Don't return encrypted keys
       },

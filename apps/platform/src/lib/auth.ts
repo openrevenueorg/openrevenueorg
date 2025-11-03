@@ -1,47 +1,40 @@
-import NextAuth from 'next-auth';
-import type { NextAuthConfig } from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import GoogleProvider from 'next-auth/providers/google';
-import GitHubProvider from 'next-auth/providers/github';
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { nextCookies } from 'better-auth/next-js';
 import { prisma } from './prisma';
 
-export const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    }),
-  ],
-  pages: {
-    signIn: '/login',
-    signOut: '/logout',
-    error: '/auth/error',
-    verifyRequest: '/auth/verify-request',
+export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000',
+  secret: process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key-at-least-32-characters-long',
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql',
+  }),
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 8,
+    maxPasswordLength: 128,
   },
-  callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        (session.user as any).id = user.id;
-      }
-      return session;
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
   session: {
-    strategy: 'database',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
+    updateAge: 60 * 60 * 24, // 24 hours
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
   },
-  debug: process.env.NODE_ENV === 'development',
-  trustHost: true, // Required for Next.js 15+
-};
+  plugins: [
+    nextCookies(), // Must be last plugin for Next.js cookie handling
+  ],
+});
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+export type Session = typeof auth.$Infer.Session;

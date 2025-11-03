@@ -2,7 +2,33 @@
  * Data verification utilities for standalone app integration
  */
 
-import { createHash, createVerify } from 'crypto';
+import nacl from 'tweetnacl';
+import { createHash } from 'crypto';
+
+/**
+ * Verify Ed25519 signature from standalone app
+ */
+export function verifySignature(
+  dataString: string,
+  signature: string,
+  publicKey: string
+): boolean {
+  try {
+    const dataBytes = Buffer.from(dataString, 'utf-8');
+    const signatureBytes = Buffer.from(signature, 'base64');
+    const publicKeyBytes = Buffer.from(publicKey, 'base64');
+    
+    // Verify Ed25519 signature using NaCl
+    return nacl.sign.detached.verify(
+      dataBytes,
+      signatureBytes,
+      publicKeyBytes
+    );
+  } catch (error) {
+    console.error('Signature verification error:', error);
+    return false;
+  }
+}
 
 export function generateDataHash(data: any): string {
   const hash = createHash('sha256');
@@ -10,25 +36,7 @@ export function generateDataHash(data: any): string {
   return hash.digest('hex');
 }
 
-export function verifySignature(
-  data: any,
-  signature: string,
-  publicKey: string
-): boolean {
-  try {
-    const verify = createVerify('SHA256');
-    verify.update(JSON.stringify(data));
-    verify.end();
-
-    return verify.verify(publicKey, signature, 'base64');
-  } catch (error) {
-    console.error('Signature verification error:', error);
-    return false;
-  }
-}
-
-export function isDataStale(timestamp: Date, maxAgeHours: number = 24): boolean {
-  const now = new Date();
-  const ageInHours = (now.getTime() - timestamp.getTime()) / (1000 * 60 * 60);
-  return ageInHours > maxAgeHours;
+export function isDataStale(timestamp: number, maxAgeMinutes: number = 10): boolean {
+  const ageInMs = Date.now() - timestamp;
+  return ageInMs > maxAgeMinutes * 60 * 1000;
 }

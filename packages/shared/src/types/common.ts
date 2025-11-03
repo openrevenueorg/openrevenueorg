@@ -73,6 +73,8 @@ export interface HealthStatus {
   uptime: number;
   lastSync?: Date;
   message?: string;
+  publicKey?: string; // Public key for cryptographic verification
+  timestamp?: number; // Timestamp of health check
 }
 
 export interface ApiError {
