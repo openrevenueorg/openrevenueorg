@@ -36,7 +36,7 @@ COPY --from=deps /app/apps ./apps
 # Copy source files
 COPY packages/shared ./packages/shared
 COPY apps/platform ./apps/platform
-COPY turbo.json ./
+
 
 # Build shared package
 WORKDIR /app/packages/shared
