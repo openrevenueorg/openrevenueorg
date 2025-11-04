@@ -7,7 +7,7 @@ import { StripeProvider } from './stripe';
 import { PaddleProvider } from './paddle';
 import { LemonSqueezyProvider } from './lemonsqueezy';
 import { PayPalProvider } from './paypal';
-import type { PaymentProvider as PaymentProviderType } from '@openrevenue/shared';
+import type { PaymentProvider as PaymentProviderType } from '@openrevenueorg/shared';
 
 export { PaymentProvider, type PaymentProviderConfig };
 

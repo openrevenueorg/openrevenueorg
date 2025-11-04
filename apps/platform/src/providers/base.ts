@@ -7,7 +7,7 @@ import type {
   RevenueMetrics,
   RevenueDataPoint,
   Currency,
-} from '@openrevenue/shared';
+} from '@openrevenueorg/shared';
 
 export interface PaymentProviderConfig {
   apiKey: string;

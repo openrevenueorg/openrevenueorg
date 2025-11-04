@@ -8,7 +8,7 @@ import {
   type FetchRevenueOptions,
   type ValidationResult,
 } from './base';
-import type { RevenueMetrics, RevenueDataPoint } from '@openrevenue/shared';
+import type { RevenueMetrics, RevenueDataPoint } from '@openrevenueorg/shared';
 
 export class PayPalProvider extends PaymentProvider {
   private apiUrl: string;

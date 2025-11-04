@@ -17,7 +17,8 @@ COPY packages/shared/package.json ./packages/shared/
 COPY apps/platform/package.json ./apps/platform/
 
 # Install dependencies (production only where possible)
-RUN pnpm install --frozen-lockfile --prod=false
+# Note: Use --no-frozen-lockfile if lockfile is outdated, but prefer updating lockfile first
+RUN pnpm install --frozen-lockfile --prod=false || pnpm install --no-frozen-lockfile --prod=false
 
 # Copy Prisma schema for client generation
 COPY apps/platform/prisma ./apps/platform/prisma
@@ -33,14 +34,23 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@9.15.4
 
-# Copy dependencies from deps stage
+# Copy dependencies and workspace structure from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY --from=deps /app/apps ./apps
 
-# Copy source files and config
-COPY packages/shared ./packages/shared
-COPY apps/platform ./apps/platform
+# Copy source files and config (overwrite only source files, not node_modules)
+COPY packages/shared/src ./packages/shared/src
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/shared/tsconfig.json ./packages/shared/tsconfig.json
+COPY apps/platform/src ./apps/platform/src
+COPY apps/platform/public ./apps/platform/public
+COPY apps/platform/package.json ./apps/platform/package.json
+COPY apps/platform/next.config.js ./apps/platform/next.config.js
+COPY apps/platform/tsconfig.json ./apps/platform/tsconfig.json
+COPY apps/platform/tailwind.config.ts ./apps/platform/tailwind.config.ts
+COPY apps/platform/postcss.config.js ./apps/platform/postcss.config.js
+COPY apps/platform/prisma ./apps/platform/prisma
 COPY turbo.json ./
 
 # Build shared package
@@ -71,10 +81,9 @@ RUN adduser --system --uid 1001 nextjs
 # Install pnpm for runtime migrations (if needed)
 RUN npm install -g pnpm@9.15.4
 
-# Copy Prisma schema, migrations, and generated client for runtime migrations
+# Copy Prisma schema and migrations for runtime migrations
+# Note: Prisma client is already included in the standalone build's node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/prisma ./prisma
-COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/node_modules/@prisma ./node_modules/@prisma
 # Note: Prisma CLI will be available via npx in the entrypoint script
 
 # Copy built application

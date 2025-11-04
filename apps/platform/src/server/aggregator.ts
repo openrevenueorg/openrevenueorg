@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 import { createProvider } from '@/providers';
 import { StandaloneClient } from '@/standalone/client';
 import { decryptApiKey } from '@/lib/encryption';
-import type { RevenueDataPoint, RevenueMetrics } from '@openrevenue/shared';
+import type { RevenueDataPoint, RevenueMetrics } from '@openrevenueorg/shared';
 
 export interface SyncResult {
   success: boolean;

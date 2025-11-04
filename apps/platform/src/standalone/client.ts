@@ -7,7 +7,7 @@ import type {
   RevenueDataPoint,
   HealthStatus,
   DataSignature,
-} from '@openrevenue/shared';
+} from '@openrevenueorg/shared';
 import { verifySignature as verifyEd25519, isDataStale } from '@/lib/verification';
 
 export interface StandaloneClientConfig {

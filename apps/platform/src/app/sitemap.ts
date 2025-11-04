@@ -4,14 +4,21 @@ import { prisma } from '@/lib/prisma';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://openrevenue.org';
 
-  // Get all published startups
-  const startups = await prisma.startup.findMany({
-    where: { isPublished: true },
-    select: {
-      slug: true,
-      updatedAt: true,
-    },
-  });
+  // Get all published startups (with error handling for build time)
+  let startups: Array<{ slug: string; updatedAt: Date }> = [];
+  try {
+    startups = await prisma.startup.findMany({
+      where: { isPublished: true },
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+    });
+  } catch (error) {
+    // During build time, database might not be available
+    // This is okay - sitemap will be generated at runtime
+    console.warn('Could not fetch startups for sitemap:', error);
+  }
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

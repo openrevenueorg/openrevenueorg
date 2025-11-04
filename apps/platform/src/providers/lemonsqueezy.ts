@@ -8,7 +8,7 @@ import {
   type FetchRevenueOptions,
   type ValidationResult,
 } from './base';
-import type { RevenueMetrics, RevenueDataPoint } from '@openrevenue/shared';
+import type { RevenueMetrics, RevenueDataPoint } from '@openrevenueorg/shared';
 
 export class LemonSqueezyProvider extends PaymentProvider {
   private apiUrl = 'https://api.lemonsqueezy.com/v1';
