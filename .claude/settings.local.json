@@ -35,7 +35,8 @@
       "Bash(do sed -i '/^\\/\\/ Force dynamic rendering for Next\\.js 15$/d; /^export const dynamic = .force-dynamic.;$/d' \"$file\")",
       "Bash(done)",
       "WebFetch(domain:better-auth.com)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
