@@ -54,5 +54,19 @@ fi
 
 # Start the application
 echo "✅ Starting Next.js server on port ${PORT:-5100}..."
-exec "$@"
+
+# Find server.js - it might be in the root or nested in apps/platform
+if [ -f "server.js" ]; then
+  echo "Found server.js in root directory"
+  exec node server.js
+elif [ -f "apps/platform/server.js" ]; then
+  echo "Found server.js in apps/platform directory"
+  cd apps/platform
+  exec node server.js
+else
+  echo "❌ ERROR: server.js not found in root or apps/platform/"
+  echo "Current directory contents:"
+  ls -la
+  exit 1
+fi
 

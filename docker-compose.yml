@@ -13,6 +13,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openrevenue"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - openrevenue
 
@@ -25,21 +30,61 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
     networks:
       - openrevenue
+
+  # Main Platform (Development)
+  platform:
+    build:
+      context: .
+      dockerfile: apps/platform/Dockerfile
+    container_name: openrevenue-platform
+    restart: unless-stopped
+    ports:
+      - "5100:5100"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://openrevenue:development@postgres:5432/openrevenue
+      - REDIS_URL=redis://redis:6379
+      - NEXTAUTH_SECRET=development-nextauth-secret-change-in-production
+      - NEXTAUTH_URL=http://localhost:5100
+      - NEXT_PUBLIC_APP_URL=http://localhost:5100
+      - BETTER_AUTH_URL=http://localhost:5100
+      - BETTER_AUTH_SECRET=development-better-auth-secret-change-in-production
+      - ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      - PORT=5100
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - openrevenue
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5100/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Standalone app for development/testing
   standalone:
     build:
-      context: ./packages/standalone
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/standalone/Dockerfile
     container_name: openrevenue-standalone
     restart: unless-stopped
     ports:
       - "3001:3001"
     volumes:
-      - ./packages/standalone/data:/app/data
-      - ./packages/standalone/logs:/app/logs
+      - standalone_data:/app/data
+      - standalone_logs:/app/logs
     environment:
       - NODE_ENV=development
       - JWT_SECRET=development-jwt-secret-change-in-production
@@ -50,14 +95,18 @@ services:
       - STARTUP_NAME=Example Startup
       - STARTUP_DESCRIPTION=This is an example startup for development
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - openrevenue
 
 volumes:
   postgres_data:
   redis_data:
+  standalone_data:
+  standalone_logs:
 
 networks:
   openrevenue:

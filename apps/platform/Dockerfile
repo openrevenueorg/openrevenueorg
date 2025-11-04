@@ -9,7 +9,7 @@ RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 # Install pnpm with specific version for reproducibility
-RUN npm install -g pnpm@9.15.4
+RUN npm install -g pnpm
 
 # Copy package files for better layer caching
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
@@ -31,7 +31,7 @@ RUN pnpm prisma generate
 FROM base AS builder
 WORKDIR /app
 
-# Install pnpm
+# Install pnpm with specific version for reproducibility
 RUN npm install -g pnpm@9.15.4
 
 # Copy dependencies and workspace structure from deps stage
@@ -80,7 +80,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Install pnpm for runtime migrations (if needed)
-RUN npm install -g pnpm@9.15.4
+RUN npm install -g pnpm
 
 # Copy Prisma schema and migrations for runtime migrations
 # Note: Prisma client is already included in the standalone build's node_modules
@@ -88,6 +88,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/prisma ./prisma
 # Note: Prisma CLI will be available via npx in the entrypoint script
 
 # Copy built application
+# Next.js standalone mode creates a self-contained directory with all dependencies
+# The standalone directory structure depends on the monorepo setup
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/.next/static ./.next/static
@@ -103,10 +105,12 @@ EXPOSE 5100
 ENV PORT=5100
 ENV HOSTNAME="0.0.0.0"
 
-# Health check for production deployments
+
+# Health check for production deployments 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:5100/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Use entrypoint script that handles migrations
+# The entrypoint script will find and run server.js from the correct location
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "server.js"]
