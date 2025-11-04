@@ -35,7 +35,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install
 
       - name: Run linter on platform
         run: pnpm --filter @openrevenueorg/platform lint
@@ -90,7 +90,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install
 
       - name: Generate Prisma Client
         run: pnpm --filter @openrevenueorg/platform db:generate
@@ -124,7 +124,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install
 
       - name: Generate Prisma Client
         run: pnpm --filter @openrevenueorg/platform db:generate

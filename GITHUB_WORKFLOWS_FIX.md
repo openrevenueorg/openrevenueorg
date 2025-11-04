@@ -341,8 +341,9 @@ pnpm install
 
 Before deploying:
 
-1. ✅ **Install Dependencies**
+1. ✅ **Update Lockfile** (IMPORTANT!)
    ```bash
+   # This updates pnpm-lock.yaml with the new dependencies
    pnpm install
    ```
 
@@ -353,10 +354,10 @@ Before deploying:
    pnpm --filter @openrevenueorg/platform test
    ```
 
-3. ✅ **Commit Changes**
+3. ✅ **Commit All Changes**
    ```bash
    git add .
-   git commit -m "fix: update workflows and ESLint configs for ESLint 9"
+   git commit -m "fix: update workflows, ESLint configs, and lockfile for ESLint 9"
    ```
 
 4. ✅ **Push and Test CI**
@@ -364,6 +365,10 @@ Before deploying:
    git push origin main
    # Or create PR to test workflows
    ```
+
+⚠️ **Important:** If you skip step 1, CI might update the lockfile automatically, but it's better to commit it explicitly for reproducible builds.
+
+**See [LOCKFILE_FIX.md](./LOCKFILE_FIX.md) for detailed lockfile troubleshooting.**
 
 ---
 
