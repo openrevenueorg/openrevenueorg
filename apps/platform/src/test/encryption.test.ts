@@ -2,7 +2,11 @@
  * Unit tests for encryption utilities
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+
+// Unmock the encryption module for these tests since setup.ts mocks it globally
+vi.unmock('@/lib/encryption');
+
 import { encryptApiKey, decryptApiKey } from '@/lib/encryption';
 
 describe('Encryption', () => {
