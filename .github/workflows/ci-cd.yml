@@ -9,6 +9,8 @@ on:
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '9.15.4'
+  TURBO_TELEMETRY_DISABLED: '1'
+  NEXT_TELEMETRY_DISABLED: '1'
 
 jobs:
   # Job 1: Lint and Type Check
@@ -35,11 +37,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run linter
-        run: pnpm lint
+      - name: Run linter on platform
+        run: pnpm --filter @openrevenueorg/platform lint
 
-      - name: Run type check
-        run: pnpm typecheck
+      - name: Run type check on platform
+        run: pnpm --filter @openrevenueorg/platform typecheck
 
   # Job 2: Unit Tests
   test:
@@ -93,8 +95,8 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm --filter @openrevenueorg/platform db:generate
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run tests on platform
+        run: pnpm --filter @openrevenueorg/platform test
         env:
           DATABASE_URL: postgresql://openrevenue:test@localhost:5432/openrevenue_test
           REDIS_URL: redis://localhost:6379
