@@ -1,5 +1,5 @@
 {
-  "name": "@openrevenue/platform",
+  "name": "@openrevenueorg/platform",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,6 +14,7 @@
     "test:e2e": "playwright test",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
     "db:reset": "prisma migrate reset",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
@@ -56,7 +57,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@openrevenue/shared": "workspace:*",
+    "@openrevenueorg/shared": "workspace:*",
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.9.2",
     "@types/node-cron": "^3.0.11",

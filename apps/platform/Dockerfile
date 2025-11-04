@@ -17,6 +17,9 @@ COPY apps/platform/package.json ./apps/platform/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
+RUN pnpm prisma generate
+RUN pnpm prisma db push
+RUN pnpm db:seed
 
 # Build the application
 FROM base AS builder
