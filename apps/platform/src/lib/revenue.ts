@@ -29,7 +29,10 @@ export function calculateGrowthRate(
   currentValue: number,
   previousValue: number
 ): number {
-  if (previousValue === 0) return 0;
+  if (previousValue === 0) {
+    // If starting from zero, return 100% growth if current > 0
+    return currentValue > 0 ? 100 : 0;
+  }
   return ((currentValue - previousValue) / previousValue) * 100;
 }
 
@@ -106,11 +109,17 @@ export function aggregateMonthlyMetrics(revenueData: RevenueData[]): {
 }
 
 export function formatCurrency(amount: number, currency: string = 'USD'): string {
+  // For large whole numbers, use compact format with 'k' suffix
+  if (amount >= 1000 && Number.isInteger(amount)) {
+    return `$${(amount / 1000).toFixed(0)}k`;
+  }
+
+  // For all other amounts, show with 2 decimal places
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 

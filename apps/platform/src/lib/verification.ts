@@ -32,7 +32,11 @@ export function verifySignature(
 
 export function generateDataHash(data: any): string {
   const hash = createHash('sha256');
-  hash.update(JSON.stringify(data));
+  // Handle null and undefined by converting to empty string
+  // JSON.stringify(undefined) returns undefined (not a string)
+  // JSON.stringify(null) returns "null" (a string)
+  const dataString = data === undefined || data === null ? '' : JSON.stringify(data);
+  hash.update(dataString);
   return hash.digest('hex');
 }
 

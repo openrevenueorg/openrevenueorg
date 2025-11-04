@@ -37,17 +37,29 @@ export function encryptApiKey(text: string): string {
 }
 
 export function decryptApiKey(encryptedText: string): string {
-  const buffer = Buffer.from(encryptedText, 'base64');
+  try {
+    const buffer = Buffer.from(encryptedText, 'base64');
 
-  const salt = buffer.subarray(0, SALT_LENGTH);
-  const iv = buffer.subarray(SALT_LENGTH, TAG_POSITION);
-  const tag = buffer.subarray(TAG_POSITION, ENCRYPTED_POSITION);
-  const encrypted = buffer.subarray(ENCRYPTED_POSITION);
+    // Validate buffer length
+    if (buffer.length < ENCRYPTED_POSITION) {
+      throw new Error('Invalid ciphertext: insufficient length');
+    }
 
-  const key = getKey();
+    const salt = buffer.subarray(0, SALT_LENGTH);
+    const iv = buffer.subarray(SALT_LENGTH, TAG_POSITION);
+    const tag = buffer.subarray(TAG_POSITION, ENCRYPTED_POSITION);
+    const encrypted = buffer.subarray(ENCRYPTED_POSITION);
 
-  const decipher = createDecipheriv(ALGORITHM, key, iv);
-  decipher.setAuthTag(tag);
+    const key = getKey();
 
-  return decipher.update(encrypted) + decipher.final('utf8');
+    const decipher = createDecipheriv(ALGORITHM, key, iv);
+    decipher.setAuthTag(tag);
+
+    return decipher.update(encrypted) + decipher.final('utf8');
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to decrypt API key: ${error.message}`);
+    }
+    throw new Error('Failed to decrypt API key');
+  }
 }

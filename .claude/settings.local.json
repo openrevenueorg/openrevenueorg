@@ -36,7 +36,8 @@
       "Bash(done)",
       "WebFetch(domain:better-auth.com)",
       "Bash(lsof:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(pnpm --filter @openrevenueorg/platform test:*)"
     ],
     "deny": [],
     "ask": []

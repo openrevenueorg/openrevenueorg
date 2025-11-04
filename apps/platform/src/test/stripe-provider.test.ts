@@ -8,63 +8,73 @@ import Stripe from 'stripe';
 
 // Mock Stripe
 vi.mock('stripe', () => {
-  return {
-    default: vi.fn().mockImplementation(() => ({
-      balance: {
-        retrieve: vi.fn().mockResolvedValue({ available: [{ amount: 1000, currency: 'usd' }] }),
-      },
-      charges: {
-        list: vi.fn().mockResolvedValue({
-          data: [
-            {
-              id: 'ch_1',
-              amount: 5000,
-              currency: 'usd',
-              created: 1609459200,
-              paid: true,
-              refunded: false,
-              status: 'succeeded',
-            },
-            {
-              id: 'ch_2',
-              amount: 3000,
-              currency: 'usd',
-              created: 1609459200,
-              paid: true,
-              refunded: false,
-              status: 'succeeded',
-            },
-          ],
-        }),
-      },
-      subscriptions: {
-        list: vi.fn().mockResolvedValue({
-          data: [
-            {
-              id: 'sub_1',
-              customer: 'cus_1',
-              items: {
-                data: [
-                  {
-                    price: {
-                      unit_amount: 5000,
-                      recurring: { interval: 'month' },
-                    },
-                    quantity: 1,
+  // Create a mock class that behaves like Stripe constructor
+  class MockStripe {
+    balance = {
+      retrieve: vi.fn().mockResolvedValue({ available: [{ amount: 1000, currency: 'usd' }] }),
+    };
+    charges = {
+      list: vi.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'ch_1',
+            amount: 5000,
+            currency: 'usd',
+            created: 1609459200,
+            paid: true,
+            refunded: false,
+            status: 'succeeded',
+          },
+          {
+            id: 'ch_2',
+            amount: 3000,
+            currency: 'usd',
+            created: 1609459200,
+            paid: true,
+            refunded: false,
+            status: 'succeeded',
+          },
+        ],
+      }),
+    };
+    subscriptions = {
+      list: vi.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'sub_1',
+            customer: 'cus_1',
+            items: {
+              data: [
+                {
+                  price: {
+                    unit_amount: 5000,
+                    recurring: { interval: 'month' },
                   },
-                ],
-              },
+                  quantity: 1,
+                },
+              ],
             },
-          ],
-        }),
-      },
-      customers: {
-        list: vi.fn().mockResolvedValue({
-          data: [{ id: 'cus_1' }],
-          has_more: false,
-        }),
-      },
-    })),
+          },
+        ],
+      }),
+    };
+    customers = {
+      list: vi.fn().mockResolvedValue({
+        data: [{ id: 'cus_1' }],
+        has_more: false,
+      }),
+    };
+    webhooks = {
+      constructEvent: vi.fn().mockReturnValue({ type: 'payment_intent.succeeded' }),
+    };
+
+    constructor(apiKey: string, config?: any) {
+      // Mock constructor - can access apiKey and config if needed
+    }
+  }
+
+  return {
+    default: MockStripe,
   };
 });
 
