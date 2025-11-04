@@ -12,7 +12,7 @@ export class StripeProvider implements PaymentProvider {
   async validateCredentials(credentials: Record<string, string>): Promise<boolean> {
     try {
       const stripe = new Stripe(credentials.apiKey, {
-        apiVersion: '2024-12-18.acacia',
+        apiVersion: '2025-02-24.acacia',
       });
 
       // Test API key by fetching account
@@ -28,7 +28,7 @@ export class StripeProvider implements PaymentProvider {
     const { startDate, endDate, credentials } = options;
 
     const stripe = new Stripe(credentials.apiKey, {
-      apiVersion: '2024-12-18.acacia',
+      apiVersion: '2025-02-24.acacia',
     });
 
     const revenueByDate = new Map<string, RevenueData>();

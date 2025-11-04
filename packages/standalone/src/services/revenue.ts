@@ -74,6 +74,7 @@ export async function getCurrentMetrics(): Promise<RevenueMetrics> {
       mrr: 0,
       arr: 0,
       totalRevenue: 0,
+      growthRate: 0,
       customerCount: 0,
       currency: 'USD',
       timestamp: new Date(),
@@ -89,6 +90,7 @@ export async function getCurrentMetrics(): Promise<RevenueMetrics> {
     arr: latest.arr || (latest.mrr ? latest.mrr * 12 : 0),
     totalRevenue,
     customerCount: latest.customer_count || 0,
+    growthRate: 0,
     currency: latest.currency,
     timestamp: new Date(),
   };
