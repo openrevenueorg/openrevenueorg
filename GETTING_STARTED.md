@@ -116,7 +116,7 @@ cp .env.example .env.local
 
 # 4. Configure .env.local
 #    DATABASE_URL="postgresql://user:pass@localhost:5432/openrevenue"
-#    NEXTAUTH_URL="http://localhost:3000"
+#    NEXTAUTH_URL="http://localhost:5100"
 #    NEXTAUTH_SECRET="your-secret-here"
 
 # 5. Push database schema

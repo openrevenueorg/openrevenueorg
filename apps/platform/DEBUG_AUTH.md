@@ -26,13 +26,13 @@ npx prisma migrate dev --name add_better_auth_tables
 
 Visit these URLs in your browser to test:
 
-- `http://localhost:3000/api/auth/session` - Should return session data or null
-- `http://localhost:3000/api/auth/sign-in/email` - Should return sign-in info
+- `http://localhost:5100/api/auth/session` - Should return session data or null
+- `http://localhost:5100/api/auth/sign-in/email` - Should return sign-in info
 
 ### 3. Check Better Auth Configuration
 
 The configuration needs:
-- ✅ `baseURL` - Set to `http://localhost:3000`
+- ✅ `baseURL` - Set to `http://localhost:5100`
 - ✅ `secret` - Set from `BETTER_AUTH_SECRET` env var
 - ✅ `database` - Configured with Prisma adapter
 - ⚠️  Database tables must exist
@@ -43,9 +43,9 @@ Make sure these are in your `.env.local`:
 
 ```bash
 DATABASE_URL=postgresql://openrevenue:development@localhost:5432/openrevenue
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:5100
 BETTER_AUTH_SECRET=iegmmeypS0gApIgbCoM9qBVWbMYgNVzi
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:5100
 
 # OAuth (optional for testing)
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -95,14 +95,14 @@ Look for errors in the terminal where `pnpm dev` is running. Better Auth will lo
 
 ```bash
 # Test session endpoint
-curl http://localhost:3000/api/auth/session
+curl http://localhost:5100/api/auth/session
 
 # Should return:
 # {"user":null,"session":null}
 # OR proper session data if logged in
 
 # Test if API route exists
-curl -v http://localhost:3000/api/auth/session 2>&1 | grep "HTTP"
+curl -v http://localhost:5100/api/auth/session 2>&1 | grep "HTTP"
 # Should show "HTTP/1.1 200" not "HTTP/1.1 404"
 ```
 
@@ -150,7 +150,7 @@ Try these in order:
 
 5. **Test endpoint:**
    ```bash
-   curl http://localhost:3000/api/auth/session
+   curl http://localhost:5100/api/auth/session
    ```
 
 If you still get 404, check the terminal output for specific error messages and share them.

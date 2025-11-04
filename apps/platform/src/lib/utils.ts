@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function absoluteUrl(path: string) {
-  return `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}${path}`;
+  return `${process.env.NEXTAUTH_URL || 'http://localhost:5100'}${path}`;
 }
 
 export async function fetcher<T>(url: string, options?: RequestInit): Promise<T> {

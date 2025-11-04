@@ -424,7 +424,7 @@ Due to length constraints, I'll provide the structure. Each page should follow t
 Required in `.env.local`:
 ```env
 DATABASE_URL="postgresql://..."
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:5100"
 NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
 ENCRYPTION_KEY="your-32-character-key-here-!!!!"
 REDIS_URL="redis://localhost:6379" # Optional for jobs

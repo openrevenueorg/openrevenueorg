@@ -114,3 +114,11 @@ export function closeAllWorkers() {
   ]);
 }
 
+export function closeAllQueues() {
+  return Promise.all([
+    workers.revenueSync.close(),
+    workers.leaderboardRefresh.close(),
+    workers.milestoneCheck.close(),
+  ]);
+}
+

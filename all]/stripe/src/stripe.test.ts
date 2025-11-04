@@ -126,7 +126,7 @@ describe("stripe", async () => {
 	} satisfies StripeOptions;
 	const auth = betterAuth({
 		database: memory,
-		baseURL: "http://localhost:3000",
+		baseURL: "http://localhost:5100",
 		// database: new Database(":memory:"),
 		emailAndPassword: {
 			enabled: true,
@@ -135,7 +135,7 @@ describe("stripe", async () => {
 	});
 	const ctx = await auth.$context;
 	const authClient = createAuthClient({
-		baseURL: "http://localhost:3000",
+		baseURL: "http://localhost:5100",
 		plugins: [
 			bearer(),
 			stripeClient({
@@ -367,7 +367,7 @@ describe("stripe", async () => {
 		};
 
 		const testAuth = betterAuth({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			database: memory,
 			emailAndPassword: {
 				enabled: true,
@@ -378,7 +378,7 @@ describe("stripe", async () => {
 		const testCtx = await testAuth.$context;
 
 		const mockRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -476,7 +476,7 @@ describe("stripe", async () => {
 		};
 
 		const testAuth = betterAuth({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			database: memory,
 			emailAndPassword: {
 				enabled: true,
@@ -487,7 +487,7 @@ describe("stripe", async () => {
 		const testCtx = await testAuth.$context;
 
 		const mockRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -586,7 +586,7 @@ describe("stripe", async () => {
 		};
 
 		const testAuth = betterAuth({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			emailAndPassword: {
 				enabled: true,
 			},
@@ -595,7 +595,7 @@ describe("stripe", async () => {
 		});
 
 		const mockRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -641,7 +641,7 @@ describe("stripe", async () => {
 		} as unknown as StripeOptions;
 
 		const testAuth = betterAuth({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			database: memory,
 			emailAndPassword: {
 				enabled: true,
@@ -689,7 +689,7 @@ describe("stripe", async () => {
 		};
 
 		const eventTestAuth = betterAuth({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			database: memory,
 			emailAndPassword: { enabled: true },
 			plugins: [stripe(eventTestOptions)],
@@ -707,7 +707,7 @@ describe("stripe", async () => {
 		});
 
 		const webhookRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -749,7 +749,7 @@ describe("stripe", async () => {
 		};
 
 		const updateRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -792,7 +792,7 @@ describe("stripe", async () => {
 		};
 
 		const userCancelRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -824,7 +824,7 @@ describe("stripe", async () => {
 		};
 
 		const cancelRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -857,7 +857,7 @@ describe("stripe", async () => {
 		};
 
 		const deleteRequest = new Request(
-			"http://localhost:3000/api/auth/stripe/webhook",
+			"http://localhost:5100/api/auth/stripe/webhook",
 			{
 				method: "POST",
 				headers: {
@@ -1042,7 +1042,7 @@ describe("stripe", async () => {
 		expect(billingPortalRes.data?.redirect).toBe(true);
 		expect(mockStripe.billingPortal.sessions.create).toHaveBeenCalledWith({
 			customer: expect.any(String),
-			return_url: "http://localhost:3000/dashboard",
+			return_url: "http://localhost:5100/dashboard",
 		});
 	});
 
@@ -1059,7 +1059,7 @@ describe("stripe", async () => {
 		} as unknown as StripeOptions;
 
 		const testAuth = betterAuth({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			database: memory,
 			emailAndPassword: { enabled: true },
 			plugins: [stripe(testOptions)],
@@ -1067,7 +1067,7 @@ describe("stripe", async () => {
 		const testCtx = await testAuth.$context;
 
 		const testAuthClient = createAuthClient({
-			baseURL: "http://localhost:3000",
+			baseURL: "http://localhost:5100",
 			plugins: [bearer(), stripeClient({ subscription: true })],
 			fetchOptions: {
 				customFetchImpl: async (url, init) =>
@@ -1540,7 +1540,7 @@ describe("stripe", async () => {
 
 			const testAuth = betterAuth({
 				database: memory,
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				emailAndPassword: {
 					enabled: true,
 				},
@@ -1548,7 +1548,7 @@ describe("stripe", async () => {
 			});
 
 			const testAuthClient = createAuthClient({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				plugins: [bearer(), stripeClient({ subscription: true })],
 				fetchOptions: {
 					customFetchImpl: async (url, init) =>
@@ -1612,7 +1612,7 @@ describe("stripe", async () => {
 
 			const testAuth = betterAuth({
 				database: memory,
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				emailAndPassword: {
 					enabled: true,
 				},
@@ -1620,7 +1620,7 @@ describe("stripe", async () => {
 			});
 
 			const testAuthClient = createAuthClient({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				plugins: [bearer(), stripeClient({ subscription: true })],
 				fetchOptions: {
 					customFetchImpl: async (url, init) =>
@@ -1676,7 +1676,7 @@ describe("stripe", async () => {
 
 			const testAuth = betterAuth({
 				database: memory,
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				emailAndPassword: {
 					enabled: true,
 				},
@@ -1684,7 +1684,7 @@ describe("stripe", async () => {
 			});
 
 			const testAuthClient = createAuthClient({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				plugins: [bearer(), stripeClient({ subscription: true })],
 				fetchOptions: {
 					customFetchImpl: async (url, init) =>
@@ -1730,7 +1730,7 @@ describe("stripe", async () => {
 
 			const testAuth = betterAuth({
 				database: memory,
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				emailAndPassword: {
 					enabled: true,
 				},
@@ -1738,7 +1738,7 @@ describe("stripe", async () => {
 			});
 
 			const testAuthClient = createAuthClient({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				plugins: [bearer(), stripeClient({ subscription: true })],
 				fetchOptions: {
 					customFetchImpl: async (url, init) =>
@@ -1786,14 +1786,14 @@ describe("stripe", async () => {
 			};
 
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(testOptions)],
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {
@@ -1811,14 +1811,14 @@ describe("stripe", async () => {
 
 		it("should reject webhook request without stripe-signature header", async () => {
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(stripeOptions)],
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {
@@ -1849,14 +1849,14 @@ describe("stripe", async () => {
 			};
 
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(testOptions)],
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {
@@ -1912,7 +1912,7 @@ describe("stripe", async () => {
 			};
 
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(testOptions as StripeOptions)],
@@ -1930,7 +1930,7 @@ describe("stripe", async () => {
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {
@@ -1991,7 +1991,7 @@ describe("stripe", async () => {
 			};
 
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(testOptions)],
@@ -2009,7 +2009,7 @@ describe("stripe", async () => {
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {
@@ -2057,14 +2057,14 @@ describe("stripe", async () => {
 			};
 
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(testOptions)],
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {
@@ -2133,7 +2133,7 @@ describe("stripe", async () => {
 			};
 
 			const testAuth = betterAuth({
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:5100",
 				database: memory,
 				emailAndPassword: { enabled: true },
 				plugins: [stripe(testOptions)],
@@ -2151,7 +2151,7 @@ describe("stripe", async () => {
 			});
 
 			const mockRequest = new Request(
-				"http://localhost:3000/api/auth/stripe/webhook",
+				"http://localhost:5100/api/auth/stripe/webhook",
 				{
 					method: "POST",
 					headers: {

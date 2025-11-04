@@ -55,6 +55,16 @@ async function createTables(): Promise<void> {
       startup_tagline TEXT,
       founder_name TEXT,
       founder_email TEXT,
+      founder_twitter TEXT,
+      founder_linkedin TEXT,
+      founder_github TEXT,
+      founder_instagram TEXT,
+      founder_facebook TEXT,
+      founder_youtube TEXT,
+      founder_tiktok TEXT,
+      founder_threads TEXT,
+      founder_medium TEXT,
+      founder_website TEXT,
       is_onboarded INTEGER DEFAULT 0,
       show_revenue INTEGER DEFAULT 1,
       show_mrr INTEGER DEFAULT 1,
@@ -65,6 +75,58 @@ async function createTables(): Promise<void> {
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  
+  // Migrate: Add social network columns if they don't exist
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_twitter TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_linkedin TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_github TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_instagram TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_facebook TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_youtube TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_tiktok TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_threads TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_medium TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
+  try {
+    await run(`ALTER TABLE settings ADD COLUMN founder_website TEXT`);
+  } catch (e: any) {
+    // Column might already exist, ignore
+  }
 
   // Users table - for admin authentication
   await run(`
@@ -306,9 +368,12 @@ export async function upsertSettings(settings: any): Promise<void> {
       `INSERT INTO settings (
         id, startup_name, startup_description, startup_website,
         startup_logo, startup_tagline, founder_name, founder_email,
+        founder_twitter, founder_linkedin, founder_github, founder_instagram,
+        founder_facebook, founder_youtube, founder_tiktok, founder_threads,
+        founder_medium, founder_website,
         is_onboarded, show_revenue, show_mrr, show_arr,
         show_customers, revenue_display_mode, updated_at
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
       ON CONFLICT(id) DO UPDATE SET
         startup_name = excluded.startup_name,
         startup_description = excluded.startup_description,
@@ -317,6 +382,16 @@ export async function upsertSettings(settings: any): Promise<void> {
         startup_tagline = excluded.startup_tagline,
         founder_name = excluded.founder_name,
         founder_email = excluded.founder_email,
+        founder_twitter = excluded.founder_twitter,
+        founder_linkedin = excluded.founder_linkedin,
+        founder_github = excluded.founder_github,
+        founder_instagram = excluded.founder_instagram,
+        founder_facebook = excluded.founder_facebook,
+        founder_youtube = excluded.founder_youtube,
+        founder_tiktok = excluded.founder_tiktok,
+        founder_threads = excluded.founder_threads,
+        founder_medium = excluded.founder_medium,
+        founder_website = excluded.founder_website,
         is_onboarded = excluded.is_onboarded,
         show_revenue = excluded.show_revenue,
         show_mrr = excluded.show_mrr,
@@ -332,6 +407,16 @@ export async function upsertSettings(settings: any): Promise<void> {
         settings.startup_tagline,
         settings.founder_name,
         settings.founder_email,
+        settings.founder_twitter || null,
+        settings.founder_linkedin || null,
+        settings.founder_github || null,
+        settings.founder_instagram || null,
+        settings.founder_facebook || null,
+        settings.founder_youtube || null,
+        settings.founder_tiktok || null,
+        settings.founder_threads || null,
+        settings.founder_medium || null,
+        settings.founder_website || null,
         settings.is_onboarded ? 1 : 0,
         settings.show_revenue ? 1 : 0,
         settings.show_mrr ? 1 : 0,

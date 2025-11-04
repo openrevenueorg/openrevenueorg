@@ -3380,7 +3380,7 @@ pnpm db:seed
 # Start development server
 pnpm dev
 
-# Open http://localhost:3000
+# Open http://localhost:5100
 ```
 
 ### 18.3 Code Style

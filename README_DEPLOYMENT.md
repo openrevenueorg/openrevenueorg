@@ -126,7 +126,7 @@ docker build -t openrevenue-platform ./apps/platform
 docker build -t openrevenue-jobs ./apps/platform
 
 # Run containers
-docker run -p 3000:3000 openrevenue-platform
+docker run -p 5100:5100 openrevenue-platform
 docker run openrevenue-jobs
 ```
 

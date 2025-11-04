@@ -95,7 +95,7 @@ New Better Auth client library:
 import { createAuthClient } from 'better-auth/react';
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  baseURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5100',
 });
 
 export const { signIn, signOut, signUp, useSession } = authClient;
@@ -182,7 +182,7 @@ DATABASE_URL=postgresql://user:password@localhost:5432/openrevenue
 
 # Better Auth (optional, defaults work for development)
 BETTER_AUTH_SECRET=your-secret-key-here
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:5100
 
 # OAuth Providers
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -206,13 +206,13 @@ pnpm install
 ### 4. Test Authentication
 
 **Email/Password:**
-1. Navigate to `http://localhost:3000/register`
+1. Navigate to `http://localhost:5100/register`
 2. Fill in name, email, and password
 3. Click "Create Account"
 4. Should redirect to `/dashboard/onboarding`
 
 **OAuth:**
-1. Navigate to `http://localhost:3000/register` or `/login`
+1. Navigate to `http://localhost:5100/register` or `/login`
 2. Click "Continue with Google" or "Continue with GitHub"
 3. Complete OAuth flow
 4. Should redirect to `/dashboard` or `/dashboard/onboarding`
@@ -282,8 +282,8 @@ Run `pnpm install` to ensure all dependencies are installed.
 ### OAuth not working
 1. Verify OAuth credentials in `.env.local`
 2. Check callback URLs in Google Cloud Console / GitHub settings:
-   - Google: `http://localhost:3000/api/auth/callback/google`
-   - GitHub: `http://localhost:3000/api/auth/callback/github`
+   - Google: `http://localhost:5100/api/auth/callback/google`
+   - GitHub: `http://localhost:5100/api/auth/callback/github`
 
 ### Session not persisting
 1. Ensure cookies are enabled in browser

@@ -16,15 +16,8 @@ import {
   Shield,
   AlertTriangle,
 } from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+import { RevenueChart } from '@/components/revenue-chart';
+import { Navbar } from '@/components/navbar';
 
 interface Props {
   params: Promise<{
@@ -32,6 +25,17 @@ interface Props {
   }>;
 }
 
+
+async function getStartupBySlug(slug: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/startups/${slug}`, {
+    cache: 'no-store',
+  });
+  if (!response.ok) {
+    return { error: 'Startup not found' };
+  }
+  const startup = await response.json();
+  return startup;
+}
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   // TODO: Fetch startup data
@@ -59,7 +63,7 @@ const mockData = {
     customers: 890,
     growthRate: 25.3,
     currency: 'USD',
-    trustLevel: 'PLATFORM_VERIFIED' as const,
+    trustLevel: 'PLATFORM_VERIFIED' as 'PLATFORM_VERIFIED' | 'SELF_REPORTED',
     verificationMethod: 'Direct Stripe Integration',
     lastVerifiedAt: '2024-01-15',
   },
@@ -116,31 +120,14 @@ export default async function StartupPage({ params }: Props) {
   const { slug } = await params;
 
   //TODO: Fetch startup data from database
-  // const startup = await getStartupBySlug(slug);
-  // if (!startup) notFound();
+  const startup = await getStartupBySlug(slug);
+  if (!startup) notFound();
 
-  const { startup, revenueHistory, milestones, stories } = mockData;
+  const { revenueHistory, milestones, stories } = mockData;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <Link href="/" className="font-bold text-2xl">
-              OpenRevenue
-            </Link>
-            <div className="flex gap-4 items-center">
-              <Link href="/leaderboard" className="text-sm hover:text-primary">
-                Leaderboard
-              </Link>
-              <Link href="/login" className="text-sm hover:text-primary">
-                Sign In
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-12">
         {/* Startup Header */}
@@ -148,7 +135,7 @@ export default async function StartupPage({ params }: Props) {
           <div className="flex items-start gap-6 mb-6">
             <Avatar className="h-20 w-20">
               <AvatarImage src={startup.logo} alt={startup.name} />
-              <AvatarFallback>{startup.name[0]}</AvatarFallback>
+              <AvatarFallback>{startup.name}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
@@ -192,7 +179,7 @@ export default async function StartupPage({ params }: Props) {
                   <a
                     href={startup.website}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     className="flex items-center gap-1 hover:text-primary"
                   >
                     <Globe className="h-4 w-4" />
@@ -210,7 +197,7 @@ export default async function StartupPage({ params }: Props) {
               <a
                 href={startup.website}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
               >
                 Visit Website
               </a>
@@ -289,27 +276,7 @@ export default async function StartupPage({ params }: Props) {
             <CardTitle>Revenue Trend</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={revenueHistory}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis
-                  tickFormatter={(value) =>
-                    formatCurrency(value).replace('.00', '')
-                  }
-                />
-                <Tooltip
-                  formatter={(value: any) => [formatCurrency(value), 'MRR']}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="mrr"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <RevenueChart data={revenueHistory} />
           </CardContent>
         </Card>
 

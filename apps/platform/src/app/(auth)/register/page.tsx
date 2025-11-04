@@ -101,7 +101,7 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              <div className="grid gap-2">
+              <div className="grid gap-2 pointer-events-none disabled opacity-50">
                 <Button
                   variant="outline"
                   type="button"

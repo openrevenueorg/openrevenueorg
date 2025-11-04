@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Step 1: Startup Details Schema
@@ -45,11 +45,26 @@ type StartupDetails = z.infer<typeof startupDetailsSchema>;
 type PrivacySettings = z.infer<typeof privacySettingsSchema>;
 type Connection = z.infer<typeof connectionSchema>;
 
-export default function OnboardingPage() {
+async function getCategories() {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/categories`, {
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  return response.json();
+}
+
+
+export default async function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [startupId, setStartupId] = useState<string | null>(null);
+  
+  const categories = await getCategories();
 
   // Step 1: Startup Details Form
   const startupForm = useForm<StartupDetails>({
@@ -87,7 +102,7 @@ export default function OnboardingPage() {
       standaloneApiKey: '',
     },
   });
-
+  
   const onSubmitStartup = async (data: StartupDetails) => {
     setLoading(true);
     try {
@@ -255,6 +270,27 @@ export default function OnboardingPage() {
                 {startupForm.formState.errors.slug && (
                   <p className="text-sm text-destructive">
                     {startupForm.formState.errors.slug.message}
+                  </p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="categoryId">Category *</Label>
+                <div className="flex items-center gap-2">
+                  <Select onValueChange={(value) => startupForm.setValue('categoryId', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category: any) => (
+                        <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {startupForm.formState.errors.categoryId && (
+                  <p className="text-sm text-destructive">
+                    {startupForm.formState.errors.categoryId?.message}
                   </p>
                 )}
               </div>

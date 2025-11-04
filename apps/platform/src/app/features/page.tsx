@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,8 +16,10 @@ import {
   Users,
   GitBranch,
 } from 'lucide-react';
+import { Navbar } from '@/components/navbar';
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://openrevenue.org'),
   title: 'Features | OpenRevenue',
   description: 'Discover OpenRevenue features and capabilities',
 };
@@ -24,30 +27,7 @@ export const metadata = {
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <Link href="/" className="font-bold text-2xl">
-              OpenRevenue
-            </Link>
-            <div className="flex gap-4 items-center">
-              <Link href="/leaderboard" className="text-sm hover:text-primary">
-                Leaderboard
-              </Link>
-              <Link href="/explore" className="text-sm hover:text-primary">
-                Explore
-              </Link>
-              <Link href="/about" className="text-sm hover:text-primary">
-                About
-              </Link>
-              <Link href="/login" className="text-sm hover:text-primary">
-                Sign In
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-16">
         {/* Hero */}

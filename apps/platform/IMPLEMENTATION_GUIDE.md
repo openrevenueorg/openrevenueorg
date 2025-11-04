@@ -434,7 +434,7 @@ Create `.env.local`:
 DATABASE_URL="postgresql://user:pass@localhost:5432/openrevenue"
 
 # NextAuth
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:5100"
 NEXTAUTH_SECRET="your-secret-here"
 
 # OAuth Providers (optional)

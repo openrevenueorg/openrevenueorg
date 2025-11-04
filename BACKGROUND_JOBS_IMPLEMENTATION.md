@@ -225,7 +225,7 @@ pnpm jobs:start
 tail -f logs/jobs.log
 
 # Trigger manual sync
-curl -X POST http://localhost:3000/api/sync/trigger
+curl -X POST http://localhost:5100/api/sync/trigger
 ```
 
 ### Unit Tests

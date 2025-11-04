@@ -148,7 +148,7 @@ pnpm install
 pnpm db:push
 pnpm dev
 
-# Visit http://localhost:3000
+# Visit http://localhost:5100
 ```
 
 ---

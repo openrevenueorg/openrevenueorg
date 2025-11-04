@@ -4,6 +4,7 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { PublicPage } from './pages/PublicPage';
+import { FounderPage } from './pages/FounderPage';
 import { useAuth } from './hooks/useAuth';
 import { useOnboarding } from './hooks/useOnboarding';
 
@@ -13,6 +14,9 @@ function App() {
       <Routes>
         {/* Public revenue page */}
         <Route path="/" element={<PublicPage />} />
+
+        {/* Founder page */}
+        <Route path="/founder" element={<FounderPage />} />
 
         {/* Onboarding flow */}
         <Route path="/onboarding" element={<OnboardingGuard />} />

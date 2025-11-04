@@ -18,6 +18,17 @@ model User {
   emailVerifiedAt DateTime?
   name          String?
   image         String?
+  // Social network profiles
+  twitter       String?  // X/Twitter username or URL
+  linkedin      String?  // LinkedIn profile URL or username
+  github        String?  // GitHub username or URL
+  instagram     String?  // Instagram username or URL
+  facebook      String?  // Facebook profile URL or username
+  youtube       String?  // YouTube channel URL or username
+  tiktok        String?  // TikTok username or URL
+  threads       String?  // Threads username or URL
+  medium        String?  // Medium profile URL or username
+  website       String?  // Personal website/blog URL
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -87,6 +98,7 @@ model Startup {
   logo        String?
   categoryId  String?
   foundedDate DateTime?
+  currency    String    @default("USD") // Default currency for this startup
   isPublished Boolean   @default(false)
   isFeatured  Boolean   @default(false)
   userId      String
@@ -101,6 +113,7 @@ model Startup {
   milestones       Milestone[]
   stories          Story[]
   achievements     Achievement[]
+  leaderboardEntry LeaderboardEntry?
 
   @@index([userId])
   @@index([categoryId])
@@ -288,6 +301,8 @@ model LeaderboardEntry {
   growthRate    Float?
   currency      String
   lastUpdated   DateTime @default(now())
+
+  startup Startup @relation(fields: [startupId], references: [id], onDelete: Cascade)
 
   @@index([rank])
   @@map("leaderboard_entries")

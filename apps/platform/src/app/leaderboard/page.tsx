@@ -2,64 +2,84 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrustBadge } from '@/components/ui/trust-badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { TrendingUp, Trophy, Users, DollarSign } from 'lucide-react';
+import { TrendingUp, Trophy, Users, DollarSign, ChevronLeft, ChevronRight } from 'lucide-react';
+import { TrustBadge } from '@/components/ui/trust-badge';
+import { Navbar } from '@/components/navbar';
+import { prisma } from '@/lib/prisma';
 
-export const metadata: Metadata = {
-  title: 'Leaderboard | OpenRevenue',
-  description: 'Browse transparent startups ranked by revenue',
-};
+export const dynamic = 'force-dynamic';
 
-// Mock data - replace with actual database query
-const startups = [
-  {
-    id: '1',
-    rank: 1,
-    name: 'DataExpert',
-    slug: 'dataexpert',
-    logo: '/placeholder-logo.png',
-    category: 'Education',
-    mrr: 45000,
-    arr: 540000,
-    customers: 890,
-    growthRate: 25.3,
-    currency: 'USD',
-    trustLevel: 'PLATFORM_VERIFIED' as const,
-    verificationMethod: 'Direct Stripe Integration',
-  },
-  {
-    id: '2',
-    rank: 2,
-    name: 'CloudSync Pro',
-    slug: 'cloudsync-pro',
-    logo: '/placeholder-logo.png',
-    category: 'SaaS',
-    mrr: 38500,
-    arr: 462000,
-    customers: 654,
-    growthRate: 18.7,
-    currency: 'USD',
-    trustLevel: 'PLATFORM_VERIFIED' as const,
-    verificationMethod: 'Direct Paddle Integration',
-  },
-  {
-    id: '3',
-    rank: 3,
-    name: 'TaskFlow',
-    slug: 'taskflow',
-    logo: '/placeholder-logo.png',
-    category: 'Productivity',
-    mrr: 29800,
-    arr: 357600,
-    customers: 523,
-    growthRate: 31.2,
-    currency: 'USD',
-    trustLevel: 'SELF_REPORTED' as const,
-    verificationMethod: 'Self-Hosted Application',
-  },
-  // Add more mock startups...
-];
+const ITEMS_PER_PAGE = 20;
+
+async function getStartups(page: number = 1) {
+  try {
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+
+    const [startups, totalCount] = await Promise.all([
+      prisma.startup.findMany({
+        where: { isPublished: true },
+        include: {
+          category: true,
+          connections: {
+            select: {
+              trustLevel: true,
+              verificationMethod: true,
+              lastVerifiedAt: true,
+            },
+          },
+          revenueSnapshots: {
+            orderBy: { date: 'desc' },
+            take: 1,
+          },
+          leaderboardEntry: true,
+        },
+        skip,
+        take: ITEMS_PER_PAGE,
+        orderBy: {
+          leaderboardEntry: {
+            rank: 'asc',
+          },
+        },
+      }),
+      prisma.startup.count({
+        where: { isPublished: true },
+      }),
+    ]);
+
+    // Sort by rank if available
+    const startupsWithRank = startups
+      .filter((s) => s.leaderboardEntry?.rank)
+      .sort((a, b) => (a.leaderboardEntry?.rank || 999) - (b.leaderboardEntry?.rank || 999));
+    
+    const startupsWithoutRank = startups.filter((s) => !s.leaderboardEntry?.rank);
+
+    return {
+      startups: [...startupsWithRank, ...startupsWithoutRank].map((startup: any) => ({
+        id: startup.id,
+        name: startup.name,
+        slug: startup.slug,
+        description: startup.description,
+        logo: startup.logo,
+        website: startup.website,
+        category: startup.category,
+        connections: startup.connections,
+        latestRevenue: startup.revenueSnapshots[0] || null,
+        rank: startup.leaderboardEntry?.rank || null,
+        growthRate: startup.leaderboardEntry?.growthRate || null,
+      })),
+      totalCount,
+      totalPages: Math.ceil(totalCount / ITEMS_PER_PAGE),
+    };
+  } catch (error) {
+    console.error('Error fetching startups:', error);
+    return {
+      startups: [],
+      totalCount: 0,
+      totalPages: 0,
+    };
+  }
+}
 
 function formatCurrency(amount: number) {
   if (amount >= 1000000) {
@@ -71,30 +91,60 @@ function formatCurrency(amount: number) {
   return `$${amount}`;
 }
 
-export default function LeaderboardPage() {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { page?: string };
+}): Promise<Metadata> {
+  const page = Math.max(1, parseInt(searchParams?.page || '1', 10));
+  const { totalCount, totalPages } = await getStartups(page);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://openrevenue.org';
+  const currentUrl = page > 1 ? `${baseUrl}/leaderboard?page=${page}` : `${baseUrl}/leaderboard`;
+
+  return {
+    metadataBase: new URL(baseUrl),
+    title: `Revenue Leaderboard | OpenRevenue${page > 1 ? ` (Page ${page})` : ''}`,
+    description: `Discover ${totalCount} transparent startups ranked by revenue. See which startups are building in public and sharing their revenue data.${page > 1 ? ` Page ${page} of ${totalPages}.` : ''}`,
+    keywords: [
+      'startup leaderboard',
+      'revenue rankings',
+      'transparent startups',
+      'revenue transparency',
+      'startup rankings',
+    ],
+    openGraph: {
+      title: `Revenue Leaderboard | OpenRevenue${page > 1 ? ` (Page ${page})` : ''}`,
+      description: `Discover ${totalCount} transparent startups ranked by revenue.${page > 1 ? ` Page ${page} of ${totalPages}.` : ''}`,
+      type: 'website',
+      url: currentUrl,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Revenue Leaderboard | OpenRevenue${page > 1 ? ` (Page ${page})` : ''}`,
+      description: `Discover ${totalCount} transparent startups ranked by revenue.${page > 1 ? ` Page ${page} of ${totalPages}.` : ''}`,
+    },
+    alternates: {
+      canonical: page === 1 ? `${baseUrl}/leaderboard` : currentUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams?: { page?: string };
+}) {
+  const rawPage = parseInt(searchParams?.page || '1', 10);
+  const page = Math.max(1, isNaN(rawPage) ? 1 : rawPage);
+  const { startups, totalPages, totalCount } = await getStartups(page);
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <Link href="/" className="font-bold text-2xl">
-              OpenRevenue
-            </Link>
-            <div className="flex gap-4 items-center">
-              <Link href="/explore" className="text-sm hover:text-primary">
-                Explore
-              </Link>
-              <Link href="/about" className="text-sm hover:text-primary">
-                About
-              </Link>
-              <Link href="/login" className="text-sm hover:text-primary">
-                Sign In
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-12">
         {/* Title Section */}
@@ -107,7 +157,7 @@ export default function LeaderboardPage() {
             Transparent Startups
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover startups building in public and sharing their revenue
+            Discover {totalCount} startups building in public and sharing their revenue
             transparently
           </p>
         </div>
@@ -138,104 +188,171 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Leaderboard Table */}
-        <div className="space-y-4">
-          {startups.map((startup) => (
-            <Link href={`/startup/${startup.slug}`} key={startup.id}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                    {/* Rank */}
-                    <div className="md:col-span-1 text-center">
-                      <div
-                        className={`text-2xl font-bold ${
-                          startup.rank === 1
-                            ? 'text-yellow-500'
-                            : startup.rank === 2
-                            ? 'text-gray-400'
-                            : startup.rank === 3
-                            ? 'text-orange-600'
-                            : 'text-muted-foreground'
-                        }`}
-                      >
-                        {startup.rank}
-                      </div>
-                    </div>
+        {startups.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center text-muted-foreground">
+              No startups found yet.
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <div className="space-y-4 mb-8">
+              {startups.map((startup: any) => (
+                <Link href={`/startup/${startup.slug}`} key={startup.id}>
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        {/* Rank */}
+                        <div className="md:col-span-1 text-center">
+                          <div
+                            className={`text-2xl font-bold ${
+                              startup.rank === 1
+                                ? 'text-yellow-500'
+                                : startup.rank === 2
+                                ? 'text-gray-400'
+                                : startup.rank === 3
+                                ? 'text-orange-600'
+                                : 'text-muted-foreground'
+                            }`}
+                          >
+                            {startup.rank || '-'}
+                          </div>
+                        </div>
 
-                    {/* Startup Info */}
-                    <div className="md:col-span-4 flex items-center gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={startup.logo} alt={startup.name} />
-                        <AvatarFallback>{startup.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <div className="font-semibold">{startup.name}</div>
-                          {startup.trustLevel && (
-                            <TrustBadge 
-                              trustLevel={startup.trustLevel}
-                              size="sm"
-                            />
+                        {/* Startup Info */}
+                        <div className="md:col-span-4 flex items-center gap-4">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={startup.logo} alt={startup.name} />
+                            <AvatarFallback>{startup.name}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-semibold">{startup.name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {startup.category?.name}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {startup.latestRevenue?.mrr && (
+                            <div>
+                              <div className="text-xs text-muted-foreground mb-1">MRR</div>
+                              <div className="font-semibold">
+                                {formatCurrency(startup.latestRevenue.mrr)}
+                              </div>
+                            </div>
+                          )}
+                          {startup.latestRevenue?.revenue && (
+                            <div>
+                              <div className="text-xs text-muted-foreground mb-1">Revenue</div>
+                              <div className="font-semibold">
+                                {formatCurrency(startup.latestRevenue.revenue)}
+                              </div>
+                            </div>
+                          )}
+                          {startup.latestRevenue?.customerCount && (
+                            <div>
+                              <div className="text-xs text-muted-foreground mb-1">Customers</div>
+                              <div className="font-semibold">
+                                {startup.latestRevenue.customerCount}
+                              </div>
+                            </div>
+                          )}
+                          {startup.growthRate && (
+                            <div>
+                              <div className="text-xs text-muted-foreground mb-1">Growth</div>
+                              <div className="font-semibold text-green-600">
+                                +{startup.growthRate.toFixed(1)}%
+                              </div>
+                            </div>
+                          )}
+                          {startup.connections && startup.connections.length > 0 && (
+                            <div className="col-span-2 md:col-span-4">
+                              <TrustBadge
+                                trustLevel={startup.connections[0].trustLevel}
+                                verificationMethod={startup.connections[0].verificationMethod}
+                                size="sm"
+                              />
+                            </div>
                           )}
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {startup.category}
-                        </div>
                       </div>
-                    </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
 
-                    {/* Stats */}
-                    <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                          <DollarSign className="h-3 w-3" />
-                          MRR
-                        </div>
-                        <div className="font-semibold">
-                          {formatCurrency(startup.mrr)}
-                        </div>
-                      </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
+                <Link
+                  href={page > 1 ? `/leaderboard?page=${page - 1}` : '#'}
+                  className={`flex items-center gap-1 px-4 py-2 rounded-lg border transition-colors ${
+                    page <= 1
+                      ? 'opacity-50 cursor-not-allowed pointer-events-none'
+                      : 'hover:bg-muted'
+                  }`}
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Previous</span>
+                </Link>
 
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                          <DollarSign className="h-3 w-3" />
-                          ARR
-                        </div>
-                        <div className="font-semibold">
-                          {formatCurrency(startup.arr)}
-                        </div>
-                      </div>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum: number;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (page <= 3) {
+                      pageNum = i + 1;
+                    } else if (page >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
 
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                          <Users className="h-3 w-3" />
-                          Customers
-                        </div>
-                        <div className="font-semibold">{startup.customers}</div>
-                      </div>
+                    return (
+                      <Link
+                        key={pageNum}
+                        href={`/leaderboard?page=${pageNum}`}
+                        className={`px-3 py-2 rounded-lg border transition-colors ${
+                          page === pageNum
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'hover:bg-muted'
+                        }`}
+                        aria-label={`Go to page ${pageNum}`}
+                        aria-current={page === pageNum ? 'page' : undefined}
+                      >
+                        {pageNum}
+                      </Link>
+                    );
+                  })}
+                </div>
 
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                          <TrendingUp className="h-3 w-3" />
-                          Growth
-                        </div>
-                        <div className="font-semibold text-green-600">
-                          +{startup.growthRate}%
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                <Link
+                  href={page < totalPages ? `/leaderboard?page=${page + 1}` : '#'}
+                  className={`flex items-center gap-1 px-4 py-2 rounded-lg border transition-colors ${
+                    page >= totalPages
+                      ? 'opacity-50 cursor-not-allowed pointer-events-none'
+                      : 'hover:bg-muted'
+                  }`}
+                  aria-label="Next page"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+            )}
 
-        {/* Load More */}
-        <div className="text-center mt-8">
-          <button className="text-primary hover:underline">
-            Load more startups →
-          </button>
-        </div>
+            {/* Results info */}
+            <div className="text-center text-sm text-muted-foreground mt-6">
+              Showing {Math.min((page - 1) * ITEMS_PER_PAGE + 1, totalCount)}-
+              {Math.min(page * ITEMS_PER_PAGE, totalCount)} of {totalCount} startups
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

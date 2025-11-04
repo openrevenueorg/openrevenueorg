@@ -1,9 +1,12 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, TrendingUp, Lock, GitHub, Users, Zap } from 'lucide-react';
+import { Shield, TrendingUp, Lock, Github, Users, Zap } from 'lucide-react';
+import { Navbar } from '@/components/navbar';
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://openrevenue.org'),
   title: 'About | OpenRevenue',
   description: 'Learn about OpenRevenue and our mission to make revenue transparency accessible',
 };
@@ -11,27 +14,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <Link href="/" className="font-bold text-2xl">
-              OpenRevenue
-            </Link>
-            <div className="flex gap-4 items-center">
-              <Link href="/leaderboard" className="text-sm hover:text-primary">
-                Leaderboard
-              </Link>
-              <Link href="/explore" className="text-sm hover:text-primary">
-                Explore
-              </Link>
-              <Link href="/login" className="text-sm hover:text-primary">
-                Sign In
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-16">
         {/* Hero Section */}
@@ -174,17 +157,21 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-center mb-8">Open Source</h2>
           <Card className="max-w-3xl mx-auto">
             <CardContent className="p-8 text-center">
-              <GitHub className="h-16 w-16 mx-auto mb-4" />
+              <Github className="h-16 w-16 mx-auto mb-4" />
               <h3 className="text-2xl font-semibold mb-4">Built for the Community</h3>
               <p className="text-lg text-muted-foreground mb-6">
                 OpenRevenue is open-source software, free to use, modify, and contribute to
               </p>
               <div className="flex gap-4 justify-center">
                 <Button asChild variant="outline">
-                  <Link href="https://github.com/openrevenue/openrevenue">
-                    <GitHub className="h-4 w-4 mr-2" />
+                  <a
+                    href="https://github.com/openrevenue/openrevenue"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <Github className="h-4 w-4 mr-2" />
                     View on GitHub
-                  </Link>
+                  </a>
                 </Button>
                 <Button asChild>
                   <Link href="/register">Get Started</Link>

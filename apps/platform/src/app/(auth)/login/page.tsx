@@ -129,12 +129,12 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  Or continue with (Coming Soon)
                 </span>
               </div>
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-2 pointer-events-none disabled opacity-50">
               <Button
                 variant="outline"
                 type="button"

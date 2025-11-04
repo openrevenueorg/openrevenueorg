@@ -96,7 +96,7 @@ To enable OAuth authentication, you need to configure the following environment 
 ```bash
 # NextAuth Configuration
 NEXTAUTH_SECRET=your-nextauth-secret-change-in-production
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:5100
 
 # Google OAuth
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -114,7 +114,7 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 3. Enable the Google+ API
 4. Go to "Credentials" and create OAuth 2.0 Client ID
 5. Set authorized redirect URIs:
-   - Development: `http://localhost:3000/api/auth/callback/google`
+   - Development: `http://localhost:5100/api/auth/callback/google`
    - Production: `https://yourdomain.com/api/auth/callback/google`
 6. Copy the Client ID and Client Secret to your `.env.local` file
 
@@ -124,8 +124,8 @@ GITHUB_CLIENT_SECRET=your-github-client-secret
 2. Click "New OAuth App"
 3. Fill in the application details:
    - Application name: OpenRevenue (or your choice)
-   - Homepage URL: `http://localhost:3000` (development)
-   - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
+   - Homepage URL: `http://localhost:5100` (development)
+   - Authorization callback URL: `http://localhost:5100/api/auth/callback/github`
 4. Click "Register application"
 5. Copy the Client ID and generate a Client Secret
 6. Add both to your `.env.local` file
@@ -170,14 +170,14 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 3. Development server running (`pnpm dev`)
 
 ### Test Login Flow
-1. Navigate to `http://localhost:3000/login`
+1. Navigate to `http://localhost:5100/login`
 2. Click "Google" or "GitHub" button
 3. Complete OAuth authorization
 4. Should redirect to `/dashboard`
 5. Verify session is created in database
 
 ### Test Registration Flow
-1. Navigate to `http://localhost:3000/register`
+1. Navigate to `http://localhost:5100/register`
 2. Click "Continue with Google" or "Continue with GitHub"
 3. Complete OAuth authorization
 4. Should redirect to `/dashboard/onboarding`
@@ -246,8 +246,8 @@ NextAuth requires these tables (already in Prisma schema):
 
 **Issue**: "Callback URL mismatch"
 **Solution**: Ensure OAuth provider callback URLs match exactly:
-- Google: `http://localhost:3000/api/auth/callback/google`
-- GitHub: `http://localhost:3000/api/auth/callback/github`
+- Google: `http://localhost:5100/api/auth/callback/google`
+- GitHub: `http://localhost:5100/api/auth/callback/github`
 
 **Issue**: "Database connection error"
 **Solution**: Ensure PostgreSQL is running and DATABASE_URL is correct
