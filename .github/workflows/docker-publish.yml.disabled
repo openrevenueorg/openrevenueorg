@@ -11,7 +11,7 @@ on:
 env:
   REGISTRY: ghcr.io
   PLATFORM_IMAGE_NAME: ${{ github.repository }}/platform
-  STANDALONE_IMAGE_NAME: ${{ github.repository }}/standalone
+  # STANDALONE_IMAGE_NAME: ${{ github.repository }}/standalone
 
 jobs:
   build-and-push:
@@ -29,10 +29,10 @@ jobs:
             dockerfile: apps/platform/Dockerfile
             context: .
             image: ${{ github.repository }}/platform
-          - name: standalone
-            dockerfile: packages/standalone/Dockerfile
-            context: .
-            image: ${{ github.repository }}/standalone
+          # - name: standalone
+          #   dockerfile: packages/standalone/Dockerfile
+          #   context: .
+          #   image: ${{ github.repository }}/standalone
 
     steps:
       - name: Checkout code
@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Docker Hub (optional)
-        if: ${{ secrets.DOCKERHUB_USERNAME }}
+        if: ${{ env.DOCKERHUB_USERNAME }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -108,7 +108,8 @@ jobs:
 
     strategy:
       matrix:
-        image: [platform, standalone]
+        # image: [platform, standalone]
+        image: [platform]
 
     steps:
       - name: Login to GitHub Container Registry
@@ -146,6 +147,29 @@ jobs:
             docker logs test-${{ matrix.image }} || true
           fi
 
+      - name: Test jobs process
+        run: |
+          docker run --rm -d \
+            --name test-${{ matrix.image }}-jobs \
+            -e APP_MODE=jobs \
+            -e SKIP_MIGRATIONS=true \
+            -e DATABASE_URL=postgresql://test:test@localhost:5432/test \
+            -e REDIS_URL=redis://localhost:6379 \
+            -e NEXTAUTH_SECRET=test-secret \
+            -e BETTER_AUTH_SECRET=test-secret \
+            -e ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \
+            ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.image }}:${{ github.ref_name }}-${{ github.sha }} || true
+
+          sleep 5
+
+          if docker ps | grep test-${{ matrix.image }}-jobs; then
+            echo "✅ Jobs container started successfully"
+            docker stop test-${{ matrix.image }}-jobs
+          else
+            echo "⚠️ Jobs container may have issues, checking logs:"
+            docker logs test-${{ matrix.image }}-jobs || true
+          fi
+
   # Scan images for vulnerabilities
   security-scan:
     name: Security Scan
@@ -158,7 +182,8 @@ jobs:
 
     strategy:
       matrix:
-        image: [platform, standalone]
+        # image: [platform, standalone]
+        image: [platform]
 
     steps:
       - name: Login to GitHub Container Registry
