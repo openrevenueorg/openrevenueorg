@@ -1,0 +1,244 @@
+@import "tailwindcss" important;
+@config "../../tailwind.config.ts";
+
+/* @tailwind base; */
+/* @tailwind components; */
+@tailwind utilities;
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+  
+  :root {
+    --background: hsl(223.8136 0.0005% 98.6829%);
+    --foreground: hsl(0 0% 0%);
+    --card: hsl(223.8136 -172.5242% 100.0000%);
+    --card-foreground: hsl(0 0% 0%);
+    --popover: hsl(223.8136 0.0005% 98.6829%);
+    --popover-foreground: hsl(0 0% 0%);
+    --primary: hsl(0 0% 0%);
+    --primary-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --secondary: hsl(223.8136 0.0001% 92.1478%);
+    --secondary-foreground: hsl(0 0% 0%);
+    --muted: hsl(223.8136 0.0002% 96.0587%);
+    --muted-foreground: hsl(223.8136 0.0000% 32.3067%);
+    --accent: hsl(223.8136 0.0001% 92.1478%);
+    --accent-foreground: hsl(0 0% 0%);
+    --destructive: hsl(358.4334 74.9120% 59.7455%);
+    --destructive-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --border: hsl(223.8136 0.0001% 89.5577%);
+    --input: hsl(223.8136 0.0001% 92.1478%);
+    --ring: hsl(0 0% 0%);
+    --chart-1: hsl(40.6655 100.2361% 50.9228%);
+    --chart-2: hsl(223.7490 85.9924% 55.8092%);
+    --chart-3: hsl(223.8136 0.0000% 64.4710%);
+    --chart-4: hsl(223.8136 0.0001% 89.5577%);
+    --chart-5: hsl(223.8136 0.0000% 45.6078%);
+    --sidebar: hsl(223.8136 0.0005% 98.6829%);
+    --sidebar-foreground: hsl(0 0% 0%);
+    --sidebar-primary: hsl(0 0% 0%);
+    --sidebar-primary-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --sidebar-accent: hsl(223.8136 0.0001% 92.1478%);
+    --sidebar-accent-foreground: hsl(0 0% 0%);
+    --sidebar-border: hsl(223.8136 0.0001% 92.1478%);
+    --sidebar-ring: hsl(0 0% 0%);
+    --font-sans: Geist, sans-serif;
+    --font-serif: Georgia, serif;
+    --font-mono: Geist Mono, monospace;
+    --radius: 0.25rem;
+    --shadow-x: 0px;
+    --shadow-y: 1px;
+    --shadow-blur: 2px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0.18;
+    --shadow-color: hsl(0 0% 0%);
+    --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+    --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+    --shadow: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+    --shadow-md: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 2px 4px -1px hsl(0 0% 0% / 0.18);
+    --shadow-lg: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 4px 6px -1px hsl(0 0% 0% / 0.18);
+    --shadow-xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 8px 10px -1px hsl(0 0% 0% / 0.18);
+    --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
+  }
+
+  .dark {
+    --background: hsl(0 0% 0%);
+    --foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --card: hsl(223.8136 0.0000% 3.5452%);
+    --card-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --popover: hsl(223.8136 0.0000% 6.8692%);
+    --popover-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --primary: hsl(223.8136 -172.5242% 100.0000%);
+    --primary-foreground: hsl(0 0% 0%);
+    --secondary: hsl(223.8136 0.0000% 13.1499%);
+    --secondary-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --muted: hsl(223.8136 0.0000% 11.3040%);
+    --muted-foreground: hsl(223.8136 0.0000% 64.4710%);
+    --accent: hsl(223.8136 0.0000% 19.8916%);
+    --accent-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --destructive: hsl(359.9132 100.2494% 67.8807%);
+    --destructive-foreground: hsl(0 0% 0%);
+    --border: hsl(223.8136 0.0000% 14.0871%);
+    --input: hsl(223.8136 0.0000% 19.8916%);
+    --ring: hsl(223.8136 0.0000% 64.4710%);
+    --chart-1: hsl(40.6655 100.2361% 50.9228%);
+    --chart-2: hsl(218.1624 90.0354% 55.1618%);
+    --chart-3: hsl(223.8136 0.0000% 45.6078%);
+    --chart-4: hsl(223.8136 0.0000% 32.3067%);
+    --chart-5: hsl(223.8136 0.0001% 89.5577%);
+    --sidebar: hsl(223.8136 0.0000% 6.8692%);
+    --sidebar-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --sidebar-primary: hsl(223.8136 -172.5242% 100.0000%);
+    --sidebar-primary-foreground: hsl(0 0% 0%);
+    --sidebar-accent: hsl(223.8136 0.0000% 19.8916%);
+    --sidebar-accent-foreground: hsl(223.8136 -172.5242% 100.0000%);
+    --sidebar-border: hsl(223.8136 0.0000% 19.8916%);
+    --sidebar-ring: hsl(223.8136 0.0000% 64.4710%);
+    --font-sans: Geist, sans-serif;
+    --font-serif: Georgia, serif;
+    --font-mono: Geist Mono, monospace;
+    --radius: 0.25rem;
+    --shadow-x: 0px;
+    --shadow-y: 1px;
+    --shadow-blur: 2px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0.18;
+    --shadow-color: hsl(0 0% 0%);
+    --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+    --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+    --shadow: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+    --shadow-md: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 2px 4px -1px hsl(0 0% 0% / 0.18);
+    --shadow-lg: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 4px 6px -1px hsl(0 0% 0% / 0.18);
+    --shadow-xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 8px 10px -1px hsl(0 0% 0% / 0.18);
+    --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
+  }
+
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --font-serif: var(--font-serif);
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+
+    --shadow-2xs: var(--shadow-2xs);
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow: var(--shadow);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+    --shadow-2xl: var(--shadow-2xl);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+@layer utilities {
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+  }
+  
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .delay-1000 {
+    animation-delay: 1000ms;
+  }
+  
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, currentColor 1px, transparent 1px),
+      linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
