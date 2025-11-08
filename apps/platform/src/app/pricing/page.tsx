@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight } from 'lucide-react';
 import { Navbar } from '@/components/navbar';
+import { FooterElement } from '@/components/footer';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://openrevenue.org'),
@@ -249,15 +250,8 @@ export default function PricingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t mt-20 py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} OpenRevenue. Open source and free forever.
-            </p>
-          </div>
-        </div>
-      </footer>
+      
+      <FooterElement />
     </div>
   );
 }

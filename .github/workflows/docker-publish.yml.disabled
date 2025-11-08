@@ -2,7 +2,7 @@ name: Docker Image Publishing
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, production]
     tags:
       - 'v*.*.*'
   release:

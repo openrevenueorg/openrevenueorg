@@ -9,6 +9,7 @@ import { ShareButton } from '@/components/share-button';
 import { SocialLinks } from '@/components/social-links';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { FooterElement } from '@/components/footer';
 
 type FounderProfile = Prisma.UserGetPayload<{
   include: {
@@ -438,15 +439,7 @@ export default async function FounderPage({ params }: { params: { username: stri
       </div>
 
       {/* Footer */}
-      <footer className="border-t mt-20 py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} OpenRevenue. Open source and free forever.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <FooterElement />
     </div>
   );
 }
