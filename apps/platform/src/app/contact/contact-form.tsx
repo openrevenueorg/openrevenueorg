@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Navbar } from '@/components/navbar';
 import { Mail, MessageSquare, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { FooterElement } from '@/components/footer';
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -261,6 +262,8 @@ export function ContactForm() {
           </div>
         </div>
       </div>
+
+      <FooterElement />
     </div>
   );
 }

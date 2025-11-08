@@ -78,9 +78,7 @@ export function FooterElement() {
           © {new Date().getFullYear()} OpenRevenue. Open source under MIT
           License.
         </p>
-      </div>
-      <div className="pt-8 border-t text-center text-sm text-muted-foreground">
-      <BuiltBy />
+        <BuiltBy />
       </div>
     </div>
   </footer>

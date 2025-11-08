@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Navbar } from '@/components/navbar';
-import StartupData from '@/components/startup-data';
 import { notFound } from 'next/navigation';
+import StoryData from '@/components/story-data';
 import { FooterElement } from '@/components/footer';
 
 interface Props {
@@ -11,8 +11,8 @@ interface Props {
 }
 
 
-async function getStartupBySlug(slug: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/startups/public/${slug}`, {
+async function getStartupStoryBySlug(slug: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/stories/public/${slug}`, {
     cache: 'no-store',
   });
   if (!response.ok) {
@@ -25,7 +25,7 @@ async function getStartupBySlug(slug: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const startup = await getStartupBySlug(slug);
+  const startup = await getStartupStoryBySlug(slug);
 
   if (!startup) {
     return {
@@ -41,11 +41,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 
-export default async function StartupPage({ params }: Props) {
+export default async function StoryPage({ params }: Props) {
   const { slug } = await params;
 
   
-  const startup = await getStartupBySlug(slug);
+  const startup = await getStartupStoryBySlug(slug);
   if (!startup) {
     return notFound();
   }
@@ -53,8 +53,8 @@ export default async function StartupPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <Navbar />
-      <StartupData params={params} startupData={startup} />
-
+      <StoryData params={params} startupData={startup} />
+      
       <FooterElement />
     </div>
   );

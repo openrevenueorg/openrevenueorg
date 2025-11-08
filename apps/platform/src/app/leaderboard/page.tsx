@@ -9,6 +9,7 @@ import { Navbar } from '@/components/navbar';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { getStartupLogoUrl } from '@/lib/avatar';
+import { FooterElement } from '@/components/footer';
 
 type LeaderboardStartup = Prisma.StartupGetPayload<{
   include: {
@@ -416,6 +417,8 @@ export default async function LeaderboardPage({
           </>
         )}
       </div>
+      
+      <FooterElement />
     </div>
   );
 }

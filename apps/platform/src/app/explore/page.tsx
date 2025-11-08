@@ -8,6 +8,7 @@ import { TrustBadge } from '@/components/ui/trust-badge';
 import { Navbar } from '@/components/navbar';
 import { prisma } from '@/lib/prisma';
 import { getStartupLogoUrl } from '@/lib/avatar';
+import { FooterElement } from '@/components/footer';
 
 export const dynamic = 'force-dynamic';
 
@@ -330,6 +331,8 @@ export default async function ExplorePage({
           </>
         )}
       </div>
+      
+      <FooterElement />
     </div>
   );
 }

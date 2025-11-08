@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TrendingUp, Trophy, Users, DollarSign, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Navbar } from '@/components/navbar';
 import { prisma } from '@/lib/prisma';
+import { FooterElement } from '@/components/footer';
 
 export const dynamic = 'force-dynamic';
 
@@ -320,6 +321,9 @@ export default async function StartupsPage({
           </>
         )}
       </div>
+
+      
+      <FooterElement />
     </div>
   );
 }

@@ -20,7 +20,8 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Plus, FileText, Edit, Trash2, Eye, Calendar } from 'lucide-react';
-import { useSession } from '@/lib/auth-client';
+//import { useSession } from '@/lib/auth-client';
+import { IconArticle, IconArticleOff } from '@tabler/icons-react';
 
 const storySchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -42,7 +43,7 @@ interface Story {
 
 export default function StoriesPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  //const { data: session } = useSession();
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -50,10 +51,10 @@ export default function StoriesPage() {
   const [selectedStartup, setSelectedStartup] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (!session?.user) {
-    router.push('/');
-    router.refresh();
-  }
+  // if (!session?.user) {
+  //   router.push('/');
+  //   router.refresh();
+  // }
   const form = useForm<StoryForm>({
     resolver: zodResolver(storySchema),
     defaultValues: {
@@ -157,6 +158,52 @@ export default function StoriesPage() {
     } catch (error) {
       console.error('Error deleting story:', error);
       alert('Failed to delete story. Please try again.');
+    }
+  };
+
+  const handlePublish = async (storyId: string) => {
+    if (!confirm('Are you sure you want to publish this story?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/stories/${storyId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ isPublished: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to publish story');
+      }
+
+      const updated = await response.json();
+      alert(`Story ${updated.title} published successfully!`);
+    } catch (error) {
+      console.error('Error publishing story:', error);
+      alert('Failed to publish story. Please try again.');
+    }
+  };
+  
+  const handleUnPublish = async (storyId: string) => {
+    if (!confirm('Are you sure you want to unpublish this story?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/stories/${storyId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ isPublished: false }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to unpublish story');
+      }
+
+      const updated = await response.json();
+      alert(`Story ${updated.title} unpublished successfully!`);
+    } catch (error) {
+      console.error('Error unpublishing story:', error);
+      alert('Failed to unpublish story. Please try again.');
     }
   };
 
@@ -284,7 +331,7 @@ export default function StoriesPage() {
         </Dialog>
       </div>
 
-      {stories.length === 0 ? (
+      {stories?.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="text-center">
@@ -302,7 +349,7 @@ export default function StoriesPage() {
         </Card>
       ) : (
         <div className="grid gap-4">
-          {stories.map((story) => (
+          {stories?.map((story) => (
             <Card key={story.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -325,6 +372,22 @@ export default function StoriesPage() {
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
+                    
+                    {story.isPublished ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleUnPublish(story.id)}
+                      >
+                        <IconArticleOff className="h-4 w-4" />
+                      </Button>
+                    ) :  (<Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handlePublish(story.id)}
+                    >
+                      <IconArticle className="h-4 w-4" />
+                    </Button>)}
                     <Button
                       variant="ghost"
                       size="icon"
