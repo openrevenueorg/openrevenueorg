@@ -10,6 +10,7 @@ import { SocialLinks } from '@/components/social-links';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { FooterElement } from '@/components/footer';
+import { getUserAvatarUrl } from '@/lib/avatar';
 
 type FounderProfile = Prisma.UserGetPayload<{
   include: {
@@ -268,11 +269,17 @@ export default async function FounderPage({ params }: { params: { username: stri
         <div className="mb-8">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={founder.image || undefined} alt={displayName} />
-                <AvatarFallback className="text-lg">
-                  {displayName[0]?.toUpperCase() || 'F'}
-                </AvatarFallback>
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  src={getUserAvatarUrl({
+                    image: founder.image,
+                    email: founder.email,
+                    name: displayName,
+                    id: founder.id,
+                  })}
+                  alt={displayName}
+                />
+                <AvatarFallback>{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold mb-1">@{username}</h1>

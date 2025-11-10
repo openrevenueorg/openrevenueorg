@@ -14,6 +14,7 @@ import { Navbar } from '@/components/navbar';
 import { SocialLinks } from '@/components/social-links';
 import { prisma } from '@/lib/prisma';
 import { FooterElement } from '@/components/footer';
+import { getUserAvatarUrl } from '@/lib/avatar';
 
 export const dynamic = 'force-dynamic';
 
@@ -225,7 +226,7 @@ export default async function FoundersPage({
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         <Navbar />
 
-        <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Founders</h1>
@@ -278,11 +279,17 @@ export default async function FoundersPage({
                         <div className="space-y-4">
                           {/* Founder Header */}
                           <div className="flex items-start gap-4">
-                            <Avatar className="h-14 w-14">
-                              <AvatarImage src={founder.image || undefined} alt={displayName} />
-                              <AvatarFallback className="text-lg">
-                                {displayName[0]?.toUpperCase() || 'F'}
-                              </AvatarFallback>
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage
+                                src={getUserAvatarUrl({
+                                  image: founder.image,
+                                  email: founder.email,
+                                  name: displayName,
+                                  id: founder.id,
+                                })}
+                                alt={displayName}
+                              />
+                              <AvatarFallback>{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-lg truncate">@{username}</h3>

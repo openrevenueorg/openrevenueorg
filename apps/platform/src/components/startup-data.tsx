@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrustBadge } from '@/components/ui/trust-badge';
@@ -114,19 +115,19 @@ export default function StartupData({ params, startupData }: Props) {
         {/* Startup Header */}
         <div className="mb-12">
           <div className="flex items-start gap-6 mb-6">
-            <Avatar className="h-20 w-20">
-              <AvatarImage
-                src={getStartupLogoUrl({
-                  logo: startup.logo,
-                  githubHandle: startup.githubHandle,
-                  twitterHandle: startup.twitterHandle,
-                  name: startup.name,
-                  slug: startup.slug,
-                })}
-                alt={startup.name}
-              />
-              <AvatarFallback>{startup.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
+          <Avatar className="h-22 w-22">
+            <AvatarImage
+              src={getStartupLogoUrl({
+                logo: startup.logo,
+                githubHandle: startup.githubHandle,
+                twitterHandle: startup.twitterHandle,
+                name: startup.name,
+                slug: startup.slug,
+              })}
+              alt={startup.name}
+            />
+            <AvatarFallback>{startup.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-4xl font-bold">{startup.name}</h1>
@@ -290,12 +291,7 @@ export default function StartupData({ params, startupData }: Props) {
                       <div>
                         <Label className="mb-2 block">Preview</Label>
                         <div className="p-6 border rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-                          <img
-                            src={`/api/embed/${startup.slug}?format=svg`}
-                            alt="OpenRevenue verified revenue badge"
-                            width="220"
-                            height="90"
-                          />
+                          <Image src={`/api/embed/${startup.slug}?format=svg`} alt="OpenRevenue verified revenue badge" width={220} height={90} /> 
                         </div>
                       </div>
 

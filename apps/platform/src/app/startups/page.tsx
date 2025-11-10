@@ -7,6 +7,7 @@ import { TrendingUp, Trophy, Users, DollarSign, ChevronLeft, ChevronRight } from
 import { Navbar } from '@/components/navbar';
 import { prisma } from '@/lib/prisma';
 import { FooterElement } from '@/components/footer';
+import { getStartupLogoUrl } from '@/lib/avatar';
 
 export const dynamic = 'force-dynamic';
 
@@ -191,8 +192,17 @@ export default async function StartupsPage({
                       <div className="space-y-4">
                         <div className="flex items-start gap-4">
                           <Avatar className="h-12 w-12">
-                            <AvatarImage src={startup.logo} alt={startup.name} />
-                            <AvatarFallback>{startup.name}</AvatarFallback>
+                            <AvatarImage
+                              src={getStartupLogoUrl({
+                                logo: startup.logo,
+                                githubHandle: startup.githubHandle,
+                                twitterHandle: startup.twitterHandle,
+                                name: startup.name,
+                                slug: startup.slug,
+                              })}
+                              alt={startup.name}
+                            />
+                            <AvatarFallback>{startup.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold truncate">{startup.name}</div>

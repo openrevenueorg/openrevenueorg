@@ -45,6 +45,7 @@ export default function RootLayout({
               trackOutgoingLinks={true}
             />
             <Script defer src="https://umami.openrevenue.org/script.js" data-website-id="906146ac-a82c-4fca-9ece-fdfea9149b2c"/> 
+            
       </body>
     </html>
   );

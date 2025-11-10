@@ -72,7 +72,7 @@ export default function StoryData({ params, startupData }: Props) {
         {/* Startup Header */}
         <div className="mb-12">
           <div className="flex items-start gap-6 mb-6">
-            <Avatar className="h-20 w-20">
+          <Avatar className="h-12 w-12">
               <AvatarImage
                 src={getStartupLogoUrl({
                   logo: startup.logo,

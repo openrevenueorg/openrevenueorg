@@ -68,6 +68,12 @@ export function FooterElement() {
                 GitHub
               </Link>
             </li>
+            <li>
+              <Link href="https://umami.openrevenue.org/share/TWMAXISbF9lKyuoH" target="_blank"
+                rel="noopener" className="hover:text-foreground transition-colors">
+                Analytics
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
