@@ -29,6 +29,7 @@ import { BuiltBy } from "@/components/built-by";
 import { Navbar } from '@/components/navbar';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { GithubStars } from '@/components/github-stars';
 
 type HomepageStartupCandidate = Prisma.StartupGetPayload<{
   include: {
@@ -460,8 +461,10 @@ export default async function HomePage() {
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground animate-fade-in delay-400">
-              
                 <ProductHunt />
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground animate-fade-in delay-400">
+                <GithubStars />
               </div>
             </div>
           </div>

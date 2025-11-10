@@ -32,6 +32,12 @@ export function FooterElement() {
                 Explore
               </Link>
             </li>
+            <li>
+              <Link href="https://status.bidew.io/status/openrevenueorg" target="_blank"
+                rel="noopener" className="hover:text-foreground transition-colors">
+                Status
+              </Link>
+            </li>
             {/* <li>
               <Link href="/pricing" className="hover:text-foreground transition-colors">
                 Pricing

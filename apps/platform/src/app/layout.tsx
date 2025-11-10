@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/components/providers';
 import { OpenPanelComponent } from '@openpanel/nextjs';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -43,6 +44,7 @@ export default function RootLayout({
               trackAttributes={true}
               trackOutgoingLinks={true}
             />
+            <Script defer src="https://umami.openrevenue.org/script.js" data-website-id="906146ac-a82c-4fca-9ece-fdfea9149b2c"/> 
       </body>
     </html>
   );
