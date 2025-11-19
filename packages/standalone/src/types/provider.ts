@@ -23,7 +23,7 @@ export interface RevenueData {
   customerCount?: number;
 }
 
-export type ProviderType = 'stripe' | 'paddle' | 'lemonsqueezy' | 'paypal';
+export type ProviderType = 'stripe' | 'paddle' | 'lemonsqueezy' | 'paypal' | 'polar';
 
 export interface ConnectionCredentials {
   provider: ProviderType;

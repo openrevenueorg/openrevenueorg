@@ -139,3 +139,5 @@ Dockerfile.prod
 # Standalone app data
 packages/standalone/data/
 packages/standalone/logs/
+
+hajar_files.md

@@ -72,12 +72,14 @@ This approach gives you the choice between convenience (direct API integration) 
 ## 🛠️ Tech Stack
 
 ### Main Platform
+
 - **Frontend**: Next.js 16+ with App Router, Tailwind CSS, Shadcn/ui
 - **Backend**: Next.js API Routes, BullMQ + Redis
 - **Database**: PostgreSQL, Redis for caching
 - **Authentication**: BetterAuth
 
 ### Standalone App
+
 - **Backend**: Express.js/Fastify
 - **Frontend**: Next.js (static export) or vanilla HTML/CSS/JS
 - **Database**: SQLite (default) or PostgreSQL
@@ -104,6 +106,7 @@ We welcome contributions! Please read our [contribution guidelines](./CONTRIBUTI
 ## 📋 Roadmap
 
 ### Phase 1 (MVP)
+
 - [x] Project setup and architecture
 - [x] Core platform with Stripe integration
 - [x] Basic standalone app with web UI
@@ -111,12 +114,14 @@ We welcome contributions! Please read our [contribution guidelines](./CONTRIBUTI
 - [x] Docker deployment
 
 ### Phase 2 (Growth)
+
 - [ ] Multiple payment processors (Stripe done, Polar in progress)
 - [x] Stories and milestones
 - [x] Public API
 - [x] Enhanced analytics
 
 ### Phase 3 (Scale)
+
 - [x] Embeddable widgets
 - [ ] Community features
 - [ ] White-label customization

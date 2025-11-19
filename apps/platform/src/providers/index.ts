@@ -7,6 +7,7 @@ import { StripeProvider } from './stripe';
 import { PaddleProvider } from './paddle';
 import { LemonSqueezyProvider } from './lemonsqueezy';
 import { PayPalProvider } from './paypal';
+import { PolarProvider } from './polar';
 import type { PaymentProvider as PaymentProviderType } from '@openrevenueorg/shared';
 
 export { PaymentProvider, type PaymentProviderConfig };
@@ -27,6 +28,9 @@ export function createProvider(
 
     case 'paypal':
       return new PayPalProvider(config);
+
+    case 'polar':
+      return new PolarProvider(config);
 
     default:
       throw new Error(`Unsupported payment provider: ${provider}`);

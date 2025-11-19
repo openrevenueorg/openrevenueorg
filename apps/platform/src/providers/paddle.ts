@@ -2,6 +2,7 @@
  * Paddle payment provider integration
  */
 
+import { Paddle, Environment } from '@paddle/paddle-node-sdk';
 import {
   PaymentProvider,
   type PaymentProviderConfig,
@@ -11,37 +12,24 @@ import {
 import type { RevenueMetrics, RevenueDataPoint } from '@openrevenueorg/shared';
 
 export class PaddleProvider extends PaymentProvider {
+  private paddle: Paddle;
+
   constructor(config: PaymentProviderConfig) {
     super(config, 'paddle');
+    this.paddle = new Paddle(config.apiKey, {
+      environment: Environment.production, // Default to production
+    });
   }
 
   async validateCredentials(): Promise<ValidationResult> {
     try {
-      // Paddle uses vendor_id and auth_code
-      // For now, validate by making a test API call
-      const response = await fetch('https://vendors.paddle.com/api/2.0/product/get_products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vendor_id: this.config.apiKey,
-          vendor_auth_code: this.config.apiSecret,
-        }),
-      });
-
-      if (!response.ok) {
-        return {
-          valid: false,
-          error: 'Invalid Paddle credentials',
-        };
-      }
-
+      // Validate by making a lightweight API call
+      await this.paddle.products.list({ perPage: 1 });
       return { valid: true };
     } catch (error: any) {
       return {
         valid: false,
-        error: error.message || 'Failed to validate Paddle credentials',
+        error: error.message || 'Invalid Paddle credentials',
       };
     }
   }
@@ -50,44 +38,46 @@ export class PaddleProvider extends PaymentProvider {
     const { startDate, endDate, interval = 'monthly', currency = 'USD' } = options;
 
     try {
-      // Fetch transactions from Paddle API
-      const response = await fetch('https://vendors.paddle.com/api/2.0/product/get_transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vendor_id: this.config.apiKey,
-          vendor_auth_code: this.config.apiSecret,
-          from: startDate.toISOString().split('T')[0],
-          to: endDate.toISOString().split('T')[0],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch Paddle transactions');
-      }
-
-      const data = await response.json();
-      const transactions = data.response?.transactions || [];
-
-      // Group by date based on interval
       const revenueByDate = new Map<string, number>();
+      let after: string | undefined;
+      let hasMore = true;
 
-      for (const transaction of transactions) {
-        if (transaction.status !== 'completed') continue;
+      while (hasMore) {
+        const transactionCollection = await this.paddle.transactions.list({
+          perPage: 100,
+          after,
+          status: ['completed', 'paid'],
+          createdAt: {
+            start: startDate.toISOString(),
+            end: endDate.toISOString()
+          }
+        });
 
-        const date = new Date(transaction.event_time);
-        const dateKey =
-          interval === 'daily'
-            ? date.toISOString().split('T')[0]
-            : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+        const transactions = transactionCollection.data;
 
-        const amount = parseFloat(transaction.total || '0');
-        revenueByDate.set(dateKey, (revenueByDate.get(dateKey) || 0) + amount);
+        if (transactions.length === 0) {
+          hasMore = false;
+          break;
+        }
+
+        for (const transaction of transactions) {
+          const date = new Date(transaction.createdAt);
+          const dateKey =
+            interval === 'daily'
+              ? date.toISOString().split('T')[0]
+              : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+
+          const amount = parseFloat(transaction.details?.totals?.total || '0');
+          revenueByDate.set(dateKey, (revenueByDate.get(dateKey) || 0) + amount);
+        }
+
+        if (transactionCollection.meta.pagination.hasMore) {
+          after = transactionCollection.meta.pagination.next;
+        } else {
+          hasMore = false;
+        }
       }
 
-      // Convert to RevenueDataPoint array
       const dataPoints: RevenueDataPoint[] = Array.from(revenueByDate.entries())
         .map(([date, revenue]) => ({
           date: new Date(date).toISOString(),
@@ -104,53 +94,53 @@ export class PaddleProvider extends PaymentProvider {
 
   async fetchCurrentMetrics(): Promise<RevenueMetrics> {
     try {
-      // Fetch subscriptions for MRR calculation
-      const response = await fetch('https://vendors.paddle.com/api/2.0/subscription/list_users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vendor_id: this.config.apiKey,
-          vendor_auth_code: this.config.apiSecret,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch Paddle subscriptions');
-      }
-
-      const data = await response.json();
-      const subscriptions = data.response || [];
-
       let mrr = 0;
+      let after: string | undefined;
+      let hasMore = true;
       const uniqueCustomers = new Set<string>();
 
-      for (const sub of subscriptions) {
-        if (sub.state === 'active' && sub.next_payment) {
-          uniqueCustomers.add(sub.email);
-          
-          // Calculate monthly revenue
-          const amount = parseFloat(sub.next_payment.amount || '0');
-          const currency = sub.currency || 'USD';
-          
-          // Convert to USD if needed (simplified)
-          if (currency === 'USD') {
-            mrr += amount;
+      while (hasMore) {
+        const subCollection = await this.paddle.subscriptions.list({
+          perPage: 100,
+          status: ['active'],
+          after
+        });
+
+        for (const sub of subCollection.data) {
+          if (sub.recurringTransactionDetails) {
+            const amount = parseFloat(sub.recurringTransactionDetails.totals?.total || '0');
+            const interval = sub.billingCycle.interval;
+
+            if (interval === 'month') {
+              mrr += amount;
+            } else if (interval === 'year') {
+              mrr += amount / 12;
+            }
           }
+
+          if (sub.customerId) {
+            uniqueCustomers.add(sub.customerId);
+          }
+        }
+
+        if (subCollection.meta.pagination.hasMore) {
+          after = subCollection.meta.pagination.next;
+        } else {
+          hasMore = false;
         }
       }
 
+      // Calculate total revenue (last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const revenue = await this.fetchRevenue({
+      const revenuePoints = await this.fetchRevenue({
         startDate: thirtyDaysAgo,
         endDate: new Date(),
-        interval: 'monthly',
+        interval: 'monthly'
       });
 
-      const totalRevenue = revenue.reduce((sum, point) => sum + point.revenue, 0);
+      const totalRevenue = revenuePoints.reduce((sum, p) => sum + p.revenue, 0);
 
       return {
         mrr,
@@ -168,42 +158,41 @@ export class PaddleProvider extends PaymentProvider {
 
   async fetchCustomerCount(): Promise<number> {
     try {
-      const response = await fetch('https://vendors.paddle.com/api/2.0/subscription/list_users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vendor_id: this.config.apiKey,
-          vendor_auth_code: this.config.apiSecret,
-        }),
-      });
+      // Paddle doesn't have a direct count endpoint, need to iterate or estimate
+      // Using subscription count as proxy for now or we can iterate customers
+      // Iterating customers might be slow if many.
+      // Let's iterate customers for accuracy but limit if needed.
+      // For now, let's just count active subscriptions unique customers as in fetchCurrentMetrics
+      // Or we can use the customers endpoint
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch Paddle subscriptions');
-      }
+      let count = 0;
+      let after: string | undefined;
+      let hasMore = true;
 
-      const data = await response.json();
-      const subscriptions = data.response || [];
-      const uniqueCustomers = new Set<string>();
+      while (hasMore) {
+        const customerCollection = await this.paddle.customers.list({
+          perPage: 100,
+          after
+        });
 
-      for (const sub of subscriptions) {
-        if (sub.email) {
-          uniqueCustomers.add(sub.email);
+        count += customerCollection.data.length;
+
+        if (customerCollection.meta.pagination.hasMore) {
+          after = customerCollection.meta.pagination.next;
+        } else {
+          hasMore = false;
         }
       }
 
-      return uniqueCustomers.size;
+      return count;
     } catch (error: any) {
       throw new Error(`Failed to fetch Paddle customer count: ${error.message}`);
     }
   }
 
-  verifyWebhook(_payload: any, _signature: string): boolean {
-    // Paddle webhook verification
-    // Implementation would verify Paddle webhook signature
-    // For now, return true (should implement proper verification)
+  verifyWebhook(payload: any, signature: string): boolean {
+    // TODO: Implement webhook verification using Paddle SDK
+    // this.paddle.webhooks.unmarshal(payload, signature, secret);
     return true;
   }
 }
-

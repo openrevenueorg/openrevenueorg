@@ -59,12 +59,12 @@ interface StartupSummary {
 export default function ConnectionsPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  
+
   const [connections, setConnections] = useState<ConnectionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [startupList, setStartupList] = useState<StartupSummary[]>([]);
   const [selectedStartup, setSelectedStartup] = useState<StartupSummary | null>(null);
 
@@ -107,7 +107,7 @@ export default function ConnectionsPage() {
     const fetchConnections = async () => {
       setLoading(true);
       try {
-      const response = await fetch(`/api/connections?startupId=${selectedStartup.id}`);
+        const response = await fetch(`/api/connections?startupId=${selectedStartup.id}`);
         if (response.ok) {
           const data = await response.json();
           setConnections(data);
@@ -126,7 +126,7 @@ export default function ConnectionsPage() {
     router.push('/');
     router.refresh();
   }
-  
+
   const onSubmit = async (data: Connection) => {
     if (!selectedStartup) return;
 
@@ -254,6 +254,7 @@ export default function ConnectionsPage() {
                       {...form.register('provider')}
                     >
                       <option value="stripe">Stripe</option>
+                      <option value="polar">Polar.sh</option>
                       <option value="paddle">Paddle</option>
                       <option value="lemonsqueezy">Lemon Squeezy</option>
                     </select>
@@ -374,7 +375,7 @@ export default function ConnectionsPage() {
                         {connection.isActive ? 'Active' : 'Inactive'}
                       </Badge>
                       {connection.trustLevel && (
-                        <TrustBadge 
+                        <TrustBadge
                           trustLevel={connection.trustLevel}
                           verificationMethod={connection.verificationMethod}
                           size="sm"
