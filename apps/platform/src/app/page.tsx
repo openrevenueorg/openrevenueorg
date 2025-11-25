@@ -24,7 +24,7 @@ import {
   Quote,
   Github,
 } from 'lucide-react';
-import { ProductHunt } from "@/components/product-hunt";
+// import { ProductHunt } from "@/components/product-hunt";
 import { BuiltBy } from "@/components/built-by";
 import { Navbar } from '@/components/navbar';
 import type { Prisma } from '@prisma/client';

@@ -35,7 +35,8 @@ export class PaddleProvider extends PaymentProvider {
   }
 
   async fetchRevenue(options: FetchRevenueOptions): Promise<RevenueDataPoint[]> {
-    const { startDate, endDate, interval = 'monthly', currency = 'USD' } = options;
+    //const { startDate, endDate, interval = 'monthly', currency = 'USD' } = options;
+    const { startDate, currency = 'USD' } = options;
 
     try {
       const revenueByDate = new Map<string, number>();
@@ -95,7 +96,7 @@ export class PaddleProvider extends PaymentProvider {
 
   async fetchCurrentMetrics(): Promise<RevenueMetrics> {
     try {
-      let mrr = 0;
+      const mrr = 0;
       let after: string | undefined;
       let hasMore = true;
       const uniqueCustomers = new Set<string>();
@@ -191,7 +192,7 @@ export class PaddleProvider extends PaymentProvider {
     }
   }
 
-  verifyWebhook(payload: any, signature: string): boolean {
+  verifyWebhook(_payload: any, _signature: string): boolean {
     // TODO: Implement webhook verification using Paddle SDK
     // this.paddle.webhooks.unmarshal(payload, signature, secret);
     return true;

@@ -119,7 +119,7 @@ export class DodoPaymentsProvider extends PaymentProvider {
                     // Calculate MRR
                     // Assuming amount is per interval.
                     // If interval is year, divide by 12.
-                    let amount = sub.recurring_pre_tax_amount / 100; // Convert to major units
+                    const amount = sub.recurring_pre_tax_amount / 100; // Convert to major units
 
                     // Dodo subscription object structure might need verification.
                     // Assuming 'payment_frequency_interval' or similar.
@@ -170,7 +170,7 @@ export class DodoPaymentsProvider extends PaymentProvider {
             // If response has total count in meta/pagination
             // For now, return 0 if unknown, or implement properly if I can see the type.
             // I'll assume 0 for now and let tests/types guide me.
-            return 0;
+            return response.items.length;
         } catch (error: any) {
             throw new Error(`Failed to fetch Dodo Payments customer count: ${error.message}`);
         }
