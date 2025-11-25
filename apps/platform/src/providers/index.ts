@@ -8,6 +8,7 @@ import { PaddleProvider } from './paddle';
 import { LemonSqueezyProvider } from './lemonsqueezy';
 import { PayPalProvider } from './paypal';
 import { PolarProvider } from './polar';
+import { DodoPaymentsProvider } from './dodopayments';
 import type { PaymentProvider as PaymentProviderType } from '@openrevenueorg/shared';
 
 export { PaymentProvider, type PaymentProviderConfig };
@@ -31,6 +32,9 @@ export function createProvider(
 
     case 'polar':
       return new PolarProvider(config);
+
+    case 'dodo_payments':
+      return new DodoPaymentsProvider(config);
 
     default:
       throw new Error(`Unsupported payment provider: ${provider}`);

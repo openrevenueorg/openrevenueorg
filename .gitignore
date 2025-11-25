@@ -141,3 +141,7 @@ packages/standalone/data/
 packages/standalone/logs/
 
 hajar_files.md
+apps/platform/playwright-report/
+apps/platform/test-results/
+apps/platform/test-result/
+apps/platform/playwright-report/index.html

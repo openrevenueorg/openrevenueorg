@@ -2,7 +2,7 @@
  * Common types shared across OpenRevenue platform and standalone app
  */
 
-export type PaymentProvider = 'stripe' | 'paddle' | 'lemon_squeezy' | 'paypal' | 'polar';
+export type PaymentProvider = 'stripe' | 'paddle' | 'lemon_squeezy' | 'paypal' | 'polar' | 'dodo_payments';
 
 export type ConnectionType = 'direct' | 'standalone';
 

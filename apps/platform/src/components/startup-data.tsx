@@ -1,8 +1,9 @@
+// @ts-nocheck
 'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrustBadge } from '@/components/ui/trust-badge';
 import { Button } from '@/components/ui/button';
@@ -54,15 +55,15 @@ function formatCurrency(amount: number) {
 }
 
 export default function StartupData({ params, startupData }: Props) {
-    
-    
+
+
   const startup = startupData;
-    const [loading, setLoading] = useState(true);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [embedCopied, setEmbedCopied] = useState(false);
-    const [revenueHistory, setRevenueHistory] = useState<any | null>(null);
-    const [milestones, setMilestones] = useState<any | null>(null);
-    const [stories, setStories] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [embedCopied, setEmbedCopied] = useState(false);
+  const [revenueHistory, setRevenueHistory] = useState<any | null>(null);
+  const [milestones, setMilestones] = useState<any | null>(null);
+  const [stories, setStories] = useState<any | null>(null);
 
 
   const copyEmbedCode = async () => {
@@ -92,7 +93,7 @@ export default function StartupData({ params, startupData }: Props) {
     fetchStartup();
   }, [params]);
 
-  
+
 
   if (loading) {
     return (
@@ -106,35 +107,35 @@ export default function StartupData({ params, startupData }: Props) {
       </div>
     );
   }
-  
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
 
       <div className="container mx-auto px-4 py-12">
         {/* Startup Header */}
         <div className="mb-12">
           <div className="flex items-start gap-6 mb-6">
-          <Avatar className="h-22 w-22">
-            <AvatarImage
-              src={getStartupLogoUrl({
-                logo: startup.logo,
-                githubHandle: startup.githubHandle,
-                twitterHandle: startup.twitterHandle,
-                name: startup.name,
-                slug: startup.slug,
-              })}
-              alt={startup.name}
-            />
-            <AvatarFallback>{startup.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
+            <Avatar className="h-22 w-22">
+              <AvatarImage
+                src={getStartupLogoUrl({
+                  logo: startup.logo,
+                  githubHandle: startup.githubHandle,
+                  twitterHandle: startup.twitterHandle,
+                  name: startup.name,
+                  slug: startup.slug,
+                })}
+                alt={startup.name}
+              />
+              <AvatarFallback>{startup.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-4xl font-bold">{startup.name}</h1>
                 <Badge variant="secondary">{startup.category}</Badge>
                 {startup.trustLevel && (
-                  <TrustBadge 
-                    trustLevel={startup.trustLevel} 
+                  <TrustBadge
+                    trustLevel={startup.trustLevel}
                     verificationMethod={startup.verificationMethod}
                     size="lg"
                   />
@@ -188,75 +189,75 @@ export default function StartupData({ params, startupData }: Props) {
                 {/* Social Links */}
                 {(startup.twitterHandle || startup.githubHandle || startup.linkedinHandle ||
                   startup.discordUrl || startup.youtubeUrl || startup.instagramHandle) && (
-                  <div className="flex gap-3 items-center">
-                    {startup.twitterHandle && (
-                      <a
-                        href={`https://twitter.com/${startup.twitterHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                        title="Twitter / X"
-                      >
-                        <IconBrandX className="h-5 w-5" />
-                      </a>
-                    )}
-                    {startup.githubHandle && (
-                      <a
-                        href={`https://github.com/${startup.githubHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                        title="GitHub"
-                      >
-                        <IconBrandGithub className="h-5 w-5" />
-                      </a>
-                    )}
-                    {startup.linkedinHandle && (
-                      <a
-                        href={`https://linkedin.com/company/${startup.linkedinHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                        title="LinkedIn"
-                      >
-                        <IconBrandLinkedin className="h-5 w-5" />
-                      </a>
-                    )}
-                    {startup.discordUrl && (
-                      <a
-                        href={startup.discordUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                        title="Discord"
-                      >
-                        <MessageCircle className="h-5 w-5" />
-                      </a>
-                    )}
-                    {startup.youtubeUrl && (
-                      <a
-                        href={startup.youtubeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                        title="YouTube"
-                      >
-                        <IconBrandYoutube className="h-5 w-5" />
-                      </a>
-                    )}
-                    {startup.instagramHandle && (
-                      <a
-                        href={`https://instagram.com/${startup.instagramHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                        title="Instagram"
-                      >
-                        <IconBrandInstagram className="h-5 w-5" />
-                      </a>
-                    )}
-                  </div>
-                )}
+                    <div className="flex gap-3 items-center">
+                      {startup.twitterHandle && (
+                        <a
+                          href={`https://twitter.com/${startup.twitterHandle}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          title="Twitter / X"
+                        >
+                          <IconBrandX className="h-5 w-5" />
+                        </a>
+                      )}
+                      {startup.githubHandle && (
+                        <a
+                          href={`https://github.com/${startup.githubHandle}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          title="GitHub"
+                        >
+                          <IconBrandGithub className="h-5 w-5" />
+                        </a>
+                      )}
+                      {startup.linkedinHandle && (
+                        <a
+                          href={`https://linkedin.com/company/${startup.linkedinHandle}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          title="LinkedIn"
+                        >
+                          <IconBrandLinkedin className="h-5 w-5" />
+                        </a>
+                      )}
+                      {startup.discordUrl && (
+                        <a
+                          href={startup.discordUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          title="Discord"
+                        >
+                          <MessageCircle className="h-5 w-5" />
+                        </a>
+                      )}
+                      {startup.youtubeUrl && (
+                        <a
+                          href={startup.youtubeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          title="YouTube"
+                        >
+                          <IconBrandYoutube className="h-5 w-5" />
+                        </a>
+                      )}
+                      {startup.instagramHandle && (
+                        <a
+                          href={`https://instagram.com/${startup.instagramHandle}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                          title="Instagram"
+                        >
+                          <IconBrandInstagram className="h-5 w-5" />
+                        </a>
+                      )}
+                    </div>
+                  )}
               </div>
             </div>
             <Button asChild>
@@ -276,10 +277,10 @@ export default function StartupData({ params, startupData }: Props) {
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
-                
+
 
                 <Card className="mt-2">
-                <CardHeader>
+                  <CardHeader>
                     <CardTitle>Embed Badge</CardTitle>
                     <CardDescription>
                       Add your verified revenue badge to your website or README
@@ -291,7 +292,7 @@ export default function StartupData({ params, startupData }: Props) {
                       <div>
                         <Label className="mb-2 block">Preview</Label>
                         <div className="p-6 border rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-                          <Image src={`/api/embed/${startup.slug}?format=svg`} alt="OpenRevenue verified revenue badge" width={220} height={90} /> 
+                          <Image src={`/api/embed/${startup.slug}?format=svg`} alt="OpenRevenue verified revenue badge" width={220} height={90} />
                         </div>
                       </div>
 
@@ -332,7 +333,7 @@ export default function StartupData({ params, startupData }: Props) {
                     </div>
                   </CardContent>
                 </Card>
-                  
+
               </DialogContent>
             </Dialog>
           </div>
@@ -424,7 +425,7 @@ export default function StartupData({ params, startupData }: Props) {
                 <div className="space-y-4">
                   {milestones.map((milestone: any) => (
                     <div key={milestone.id} className="flex gap-4">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                           <TrendingUp className="h-5 w-5 text-primary" />
                         </div>

@@ -1,60 +1,44 @@
 /**
- * Unit tests for Polar provider
+ * Unit tests for Dodo Payments provider
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PolarProvider } from '../providers/polar';
+import { DodoPaymentsProvider } from '../providers/dodopayments';
 
-// Mock Polar SDK
-vi.mock('@polar-sh/sdk', () => {
-    class MockPolar {
-        users = {
-            getAuthenticated: vi.fn().mockResolvedValue({ id: 'user_1', email: 'test@example.com' }),
-        };
-        orders = {
+// Mock Dodo Payments SDK
+vi.mock('dodopayments', () => {
+    class MockDodoPayments {
+        payments = {
             list: vi.fn().mockResolvedValue({
-                result: {
-                    items: [
-                        {
-                            id: 'order_1',
-                            amount: 5000,
-                            currency: 'usd',
-                            createdAt: '2021-01-01T12:00:00Z',
-                            status: 'succeeded',
-                        },
-                        {
-                            id: 'order_2',
-                            amount: 3000,
-                            currency: 'usd',
-                            createdAt: '2021-01-02T12:00:00Z',
-                            status: 'succeeded',
-                        },
-                    ],
-                    pagination: {
-                        total: 2,
-                        maxPage: 1,
+                items: [
+                    {
+                        payment_id: 'pay_1',
+                        total_amount: 5000, // 50.00
+                        currency: 'USD',
+                        created_at: '2021-01-01T12:00:00Z',
+                        status: 'succeeded',
                     },
-                },
+                    {
+                        payment_id: 'pay_2',
+                        total_amount: 3000, // 30.00
+                        currency: 'USD',
+                        created_at: '2021-01-02T12:00:00Z',
+                        status: 'succeeded',
+                    },
+                ],
             }),
         };
         subscriptions = {
             list: vi.fn().mockResolvedValue({
-                result: {
-                    items: [
-                        {
-                            id: 'sub_1',
-                            userId: 'user_1',
-                            amount: 5000,
-                            currency: 'usd',
-                            status: 'active',
-                            recurringInterval: 'month',
-                        },
-                    ],
-                    pagination: {
-                        total: 1,
-                        maxPage: 1,
+                items: [
+                    {
+                        subscription_id: 'sub_1',
+                        customer: { customer_id: 'cust_1' },
+                        recurring_pre_tax_amount: 5000, // 50.00
+                        currency: 'USD',
+                        status: 'active',
                     },
-                },
+                ],
             }),
         };
         customers = {
@@ -67,16 +51,17 @@ vi.mock('@polar-sh/sdk', () => {
     }
 
     return {
-        Polar: MockPolar,
+        default: MockDodoPayments,
     };
 });
 
-describe('PolarProvider', () => {
-    let provider: PolarProvider;
+describe('DodoPaymentsProvider', () => {
+    let provider: DodoPaymentsProvider;
 
     beforeEach(() => {
-        provider = new PolarProvider({
-            apiKey: 'polar_test_12345',
+        provider = new DodoPaymentsProvider({
+            apiKey: 'dodo_test_12345',
+            environment: 'test',
         });
     });
 
@@ -102,6 +87,12 @@ describe('PolarProvider', () => {
             expect(revenue[0]).toHaveProperty('date');
             expect(revenue[0]).toHaveProperty('revenue');
             expect(revenue[0]).toHaveProperty('currency');
+            // Check if revenue is correctly calculated (sum of payments)
+            // 50 + 30 = 80
+            // But they are on different days.
+            // Monthly interval: both in Jan 2021.
+            // So one entry with 80.
+            expect(revenue[0].revenue).toBe(80);
         });
     });
 
@@ -115,15 +106,15 @@ describe('PolarProvider', () => {
             expect(metrics).toHaveProperty('currency');
             expect(metrics.mrr).toBe(50); // 5000 cents = 50 USD
             expect(metrics.arr).toBe(600); // 50 * 12
+            expect(metrics.customerCount).toBe(1);
         });
     });
 
     describe('fetchCustomerCount', () => {
-        it('should return customer count', async () => {
+        it('should return customer count (mocked as 0 for now)', async () => {
             const count = await provider.fetchCustomerCount();
             expect(typeof count).toBe('number');
             expect(count).toBe(0);
-            // expect(count).toBe(1);
         });
     });
 });

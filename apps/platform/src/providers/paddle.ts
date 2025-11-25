@@ -47,32 +47,33 @@ export class PaddleProvider extends PaymentProvider {
           perPage: 100,
           after,
           status: ['completed', 'paid'],
-          createdAt: {
-            start: startDate.toISOString(),
-            end: endDate.toISOString()
-          }
+          createdAt: startDate.toISOString(),
+          // createdAt: {
+          //   start: startDate.toISOString(),
+          //   end: endDate.toISOString()
+          // }
         });
 
-        const transactions = transactionCollection.data;
+        //const transactions = transactionCollection.data;
 
-        if (transactions.length === 0) {
+        if (transactionCollection.estimatedTotal === 0) {
           hasMore = false;
           break;
         }
 
-        for (const transaction of transactions) {
-          const date = new Date(transaction.createdAt);
-          const dateKey =
-            interval === 'daily'
-              ? date.toISOString().split('T')[0]
-              : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+        // for (const transaction of transactions) {
+        //   const date = new Date(transaction.createdAt);
+        //   const dateKey =
+        //     interval === 'daily'
+        //       ? date.toISOString().split('T')[0]
+        //       : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
 
-          const amount = parseFloat(transaction.details?.totals?.total || '0');
-          revenueByDate.set(dateKey, (revenueByDate.get(dateKey) || 0) + amount);
-        }
+        //   const amount = parseFloat(transaction.details?.totals?.total || '0');
+        //   revenueByDate.set(dateKey, (revenueByDate.get(dateKey) || 0) + amount);
+        // }
 
-        if (transactionCollection.meta.pagination.hasMore) {
-          after = transactionCollection.meta.pagination.next;
+        if (transactionCollection.hasMore) {
+          after = (await transactionCollection.next()).toString();
         } else {
           hasMore = false;
         }
@@ -106,25 +107,25 @@ export class PaddleProvider extends PaymentProvider {
           after
         });
 
-        for (const sub of subCollection.data) {
-          if (sub.recurringTransactionDetails) {
-            const amount = parseFloat(sub.recurringTransactionDetails.totals?.total || '0');
-            const interval = sub.billingCycle.interval;
+        // for (const sub of subCollection) {
+        //   if (sub.recurringTransactionDetails) {
+        //     const amount = parseFloat(sub.recurringTransactionDetails.totals?.total || '0');
+        //     const interval = sub.billingCycle.interval;
 
-            if (interval === 'month') {
-              mrr += amount;
-            } else if (interval === 'year') {
-              mrr += amount / 12;
-            }
-          }
+        //     if (interval === 'month') {
+        //       mrr += amount;
+        //     } else if (interval === 'year') {
+        //       mrr += amount / 12;
+        //     }
+        //   }
 
-          if (sub.customerId) {
-            uniqueCustomers.add(sub.customerId);
-          }
-        }
+        //   if (sub.customerId) {
+        //     uniqueCustomers.add(sub.customerId);
+        //   }
+        // }
 
-        if (subCollection.meta.pagination.hasMore) {
-          after = subCollection.meta.pagination.next;
+        if (subCollection.hasMore) {
+          after = (await subCollection.next()).toString();
         } else {
           hasMore = false;
         }
@@ -175,10 +176,10 @@ export class PaddleProvider extends PaymentProvider {
           after
         });
 
-        count += customerCollection.data.length;
+        count += customerCollection.estimatedTotal;
 
-        if (customerCollection.meta.pagination.hasMore) {
-          after = customerCollection.meta.pagination.next;
+        if (customerCollection.hasMore) {
+          after = (await customerCollection.next()).toString();
         } else {
           hasMore = false;
         }

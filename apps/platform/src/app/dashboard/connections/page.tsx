@@ -257,6 +257,7 @@ export default function ConnectionsPage() {
                       <option value="polar">Polar.sh</option>
                       <option value="paddle">Paddle</option>
                       <option value="lemonsqueezy">Lemon Squeezy</option>
+                      <option value="dodo-payments">Dodo Payments</option>
                     </select>
                   </div>
 
@@ -275,16 +276,32 @@ export default function ConnectionsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="apiKey">API Key <a href="https://dashboard.stripe.com/apikeys/create?name=OpenRevenue&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_subscription_read&permissions%5B%5D=rak_bucket_connect_read&permissions%5B%5D=rak_file_read" target="_blank" rel="noopener noreferrer">Create one here</a> </Label>
+                    <Label htmlFor="apiKey">API Key  </Label>
                     <Input
                       id="apiKey"
                       type="password"
                       placeholder="sk_test_..."
                       {...form.register('apiKey')}
                     />
+
+
                   </div>
                 </>
               )}
+
+
+              {form.watch('provider') === 'stripe' && (
+                <>
+                  <a href="https://dashboard.stripe.com/apikeys/create?name=OpenRevenue&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_subscription_read&permissions%5B%5D=rak_bucket_connect_read&permissions%5B%5D=rak_file_read" target="_blank" rel="noopener noreferrer">Create one here</a>
+                </>
+              )}
+
+              {form.watch('provider') === 'polar' && (
+                <>
+                  <a href="https://dashboard.stripe.com/apikeys/create?name=OpenRevenue&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_subscription_read&permissions%5B%5D=rak_bucket_connect_read&permissions%5B%5D=rak_file_read" target="_blank" rel="noopener noreferrer">Create one here</a>
+                </>
+              )}
+
 
               {form.watch('type') === 'standalone' && (
                 <>

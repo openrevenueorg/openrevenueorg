@@ -71,7 +71,7 @@ export function verifySignedData(signedData: SignedData): boolean {
 /**
  * Extract public key from private key
  */
-function extractPublicKey(privateKey: string): string {
+function extractPublicKey(_privateKey: string): string {
   // This will be implemented with actual crypto in the standalone app
   throw new Error('extractPublicKey must be implemented with actual crypto library');
 }
@@ -79,7 +79,7 @@ function extractPublicKey(privateKey: string): string {
 /**
  * Hash a string (for API keys, passwords, etc.)
  */
-export function hashString(input: string): string {
+export function hashString(_input: string): string {
   // This will be implemented with actual crypto library
   throw new Error('hashString must be implemented with actual crypto library');
 }

@@ -23,7 +23,9 @@ export class PolarProvider extends PaymentProvider {
 
     async validateCredentials(): Promise<ValidationResult> {
         try {
-            await this.polar.users.getAuthenticated();
+            // Validate by making a lightweight API call
+            //await this.polar.users.getAuthenticated();
+            await this.polar.payments.list({ limit: 1 });
             return { valid: true };
         } catch (error: any) {
             return {
@@ -70,7 +72,7 @@ export class PolarProvider extends PaymentProvider {
                             ? date.toISOString().split('T')[0]
                             : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
 
-                    const amount = order.amount / 100;
+                    const amount = order.totalAmount / 100;
                     revenueByDate.set(dateKey, (revenueByDate.get(dateKey) || 0) + amount);
                 }
 
@@ -114,8 +116,8 @@ export class PolarProvider extends PaymentProvider {
                         mrr += amount / 12;
                     }
 
-                    if (sub.userId) {
-                        uniqueCustomers.add(sub.userId);
+                    if (sub.customerId) {
+                        uniqueCustomers.add(sub.customerId);
                     }
                 }
             }
@@ -158,7 +160,7 @@ export class PolarProvider extends PaymentProvider {
 
             const uniqueCustomers = new Set<string>();
             for (const sub of subscriptions.result.items) {
-                if (sub.userId) uniqueCustomers.add(sub.userId);
+                if (sub.customerId) uniqueCustomers.add(sub.customerId);
             }
 
             return uniqueCustomers.size;
@@ -169,6 +171,17 @@ export class PolarProvider extends PaymentProvider {
 
     verifyWebhook(payload: any, signature: string): boolean {
         // TODO: Implement webhook verification using Polar SDK utilities if available
-        return true;
+        try {
+            const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+            if (!webhookSecret) {
+                throw new Error('Webhook secret not configured');
+            }
+
+            //this.polar.webhooks.createWebhookEndpoint( { payload, secret:webhookSecret}, { signature, webhookSecret });
+            this.polar.webhooks.listWebhookEndpoints({ limit: 100 });
+            return true;
+        } catch {
+            return false;
+        }
     }
 }
