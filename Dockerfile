@@ -82,8 +82,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install pnpm for runtime migrations (if needed)
-RUN npm install -g pnpm
+# Install pnpm for runtime migrations (if needed) and pm2
+RUN npm install -g pnpm pm2
 
 # Copy Prisma schema and migrations for runtime migrations
 # Note: Prisma client is already included in the standalone build's node_modules
@@ -100,6 +100,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/.next/standalone ./
 # Copy static and public files - check both root and monorepo structure locations
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/.next/static ./apps/platform/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/public ./apps/platform/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/src/jobs ./apps/platform/src/jobs
+COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/ecosystem.config.js ./apps/platform/ecosystem.config.js
 
 # Also copy node_modules from builder to ensure all dependencies are available
 # This is a fallback in case standalone doesn't include everything

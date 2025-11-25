@@ -98,8 +98,7 @@ jobs:
             apps/platform/public
           retention-days: 1
 
-  # Job 4: Build Docker Images (TEMPORARILY DISABLED)
-  # Uncomment when ready to build Docker images
+  # Job 4: Build Docker Images
   build-docker:
    name: Build Docker Images
    runs-on: ubuntu-latest

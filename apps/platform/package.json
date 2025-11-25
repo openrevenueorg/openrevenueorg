@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5100",
+    "dev": "concurrently \"next dev -p 5100\" \"pnpm jobs:start\" --names \"WEB,JOBS\" --prefix-colors \"blue,magenta\"",
     "build": "next build",
     "start": "next start -p 5100",
     "lint": "eslint",
@@ -103,6 +103,7 @@
     "@vitejs/plugin-react": "^5.1.0",
     "@vitest/ui": "4.0.6",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.1",
     "eslint-config-prettier": "^10.1.8",

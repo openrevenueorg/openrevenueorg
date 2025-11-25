@@ -58,37 +58,27 @@ run_migrations() {
 }
 
 start_web() {
-  echo "✅ Starting Next.js server on port ${PORT:-5100}..."
+  echo "✅ Starting Platform (Web + Jobs) using PM2..."
   echo "✅ Version 1.0.0.1 - 2025-11-05 ..."
 
-  if [ -f "server.js" ]; then
-    echo "Found server.js in root directory"
-    echo "Checking for required modules..."
-    if [ -d "node_modules/next" ]; then
-      echo "✓ next module found"
-    else
-      echo "⚠️  WARNING: next module not found in node_modules"
-      echo "Directory structure:"
-      ls -la
-      echo "\nnode_modules contents (first 10 items):"
-      ls node_modules 2>/dev/null | head -10 || echo "node_modules not found"
-    fi
-    exec node server.js
-  elif [ -f "apps/platform/server.js" ]; then
-    echo "Found server.js in apps/platform directory"
+  if [ -f "ecosystem.config.js" ]; then
+    echo "Found ecosystem.config.js"
+    exec pm2-runtime start ecosystem.config.js
+  elif [ -f "apps/platform/ecosystem.config.js" ]; then
+    echo "Found ecosystem.config.js in apps/platform"
     cd apps/platform
-    echo "Checking for required modules..."
-    if [ -d "../../node_modules/next" ] || [ -d "node_modules/next" ]; then
-      echo "✓ next module found"
-    else
-      echo "⚠️  WARNING: next module not found"
-    fi
-    exec node server.js
+    exec pm2-runtime start ecosystem.config.js
   else
-    echo "❌ ERROR: server.js not found in root or apps/platform/"
-    echo "Current directory contents:"
-    ls -la
-    exit 1
+    echo "⚠️  ecosystem.config.js not found, falling back to Next.js start only"
+    if [ -f "server.js" ]; then
+      exec node server.js
+    elif [ -f "apps/platform/server.js" ]; then
+      cd apps/platform
+      exec node server.js
+    else
+      echo "❌ ERROR: server.js not found"
+      exit 1
+    fi
   fi
 }
 

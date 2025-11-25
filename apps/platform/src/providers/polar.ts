@@ -169,7 +169,7 @@ export class PolarProvider extends PaymentProvider {
         }
     }
 
-    verifyWebhook(payload: any, signature: string): boolean {
+    verifyWebhook(_payload: any, _signature: string): boolean {
         // TODO: Implement webhook verification using Polar SDK utilities if available
         try {
             const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
