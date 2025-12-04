@@ -57,6 +57,7 @@ export interface StartupProfile {
   description?: string;
   website?: string;
   logo?: string;
+  country?: string;
   category?: string;
   foundedDate?: Date;
   privacySettings: PrivacySettings;

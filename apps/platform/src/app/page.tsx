@@ -408,98 +408,111 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
       />
 
-      <main className="flex-1">
-        {/* Hero Section - Enhanced */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-muted/30 py-20 md:py-32">
-          {/* Animated background elements */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-5 dark:opacity-10" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse delay-1000" />
+      <main className="flex-1 pt-24">
+        {/* Hero Section - Premium Design */}
+        <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+          {/* Animated mesh gradient background */}
+          <div className="absolute inset-0 bg-mesh-gradient animate-gradient" />
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] dark:opacity-[0.05]" />
+
+          {/* Floating orbs */}
+          <div className="absolute top-20 left-[10%] w-72 h-72 bg-primary/20 rounded-full blur-[100px] animate-float" />
+          <div className="absolute bottom-20 right-[10%] w-96 h-96 bg-chart-2/20 rounded-full blur-[100px] animate-float delay-1000" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-chart-3/10 rounded-full blur-[120px]" />
 
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center max-w-4xl mx-auto">
-              <Badge className="mb-6 animate-fade-in" variant="secondary">
-                <Sparkles className="h-3 w-3 mr-2" />
-                Open Source & Free Forever
-              </Badge>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent animate-fade-in-up">
-                Transparent Revenue
-                <br />
-                <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                  Made Simple
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-in-up delay-200">
-                The open-source alternative to TrustMRR. Verify and showcase your
-                startup&apos;s revenue transparently with cryptographic verification.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-fade-in-up delay-300">
-                <Button size="lg" className="text-lg px-8 group" asChild>
-                  <Link href="/register">
-                    Start Free
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8" asChild>
-                  <Link href="/leaderboard">View Leaderboard</Link>
-                </Button>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground animate-fade-in delay-400">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  <span>No credit card required</span>
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-fade-in">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  </span>
+                  <span className="text-sm font-medium text-primary">Open Source & Free Forever</span>
                 </div>
-                <span className="hidden sm:inline">•</span>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  <span>Self-host or use managed platform</span>
+
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 animate-fade-in-up">
+                  <span className="block text-foreground">Transparent</span>
+                  <span className="block gradient-text">Revenue Metrics</span>
+                </h1>
+
+                <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
+                  The open-source alternative to TrustMRR. Verify and showcase your
+                  startup's revenue transparently with cryptographic verification.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-fade-in-up delay-300">
+                  <Button size="lg" className="text-lg px-8 h-14 rounded-xl shadow-lg hover:shadow-xl transition-all group" asChild>
+                    <Link href="/register">
+                      Start Free
+                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-xl border-2" asChild>
+                    <Link href="/leaderboard">View Leaderboard</Link>
+                  </Button>
                 </div>
-                <span className="hidden sm:inline">•</span>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  <span>100% open source</span>
+
+                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-fade-in delay-400">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                    </div>
+                    <span>No credit card required</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                    </div>
+                    <span>Self-host or managed</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                    </div>
+                    <span>100% open source</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground animate-fade-in delay-400">
-                {/* <ProductHunt /> */}
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground animate-fade-in delay-400">
-                <GithubStars />
+
+                <div className="mt-8 animate-fade-in delay-500">
+                  <GithubStars />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Stats Section - Enhanced with Icons https://www.producthunt.com/products/openrevenue?utm_source=twitter&utm_medium=social&utm_campaign=openrevenueorg */}
-        <section className="border-y bg-muted/30 py-12 backdrop-blur-sm">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div className="group">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3 group-hover:bg-primary/20 transition-colors">
+        {/* Stats Section - Bento Grid Style */}
+        <section className="py-16 relative overflow-hidden">
+          <div className="absolute inset-0 bg-muted/30" />
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="group p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Code className="h-6 w-6 text-primary" />
                 </div>
-                <div className="text-3xl md:text-4xl font-bold mb-2">100%</div>
+                <div className="text-3xl md:text-4xl font-bold mb-1 counter-value">100%</div>
                 <div className="text-sm text-muted-foreground">Open Source</div>
               </div>
-              <div className="group">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 mb-3 group-hover:bg-green-500/20 transition-colors">
+              <div className="group p-6 rounded-2xl bg-card border border-border/50 hover:border-green-500/30 transition-all duration-300 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <div className="text-3xl md:text-4xl font-bold mb-2">$0</div>
+                <div className="text-3xl md:text-4xl font-bold mb-1 counter-value">$0</div>
                 <div className="text-sm text-muted-foreground">Free Forever</div>
               </div>
-              <div className="group">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/10 mb-3 group-hover:bg-blue-500/20 transition-colors">
+              <div className="group p-6 rounded-2xl bg-card border border-border/50 hover:border-blue-500/30 transition-all duration-300 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Server className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <div className="text-3xl md:text-4xl font-bold mb-2">∞</div>
+                <div className="text-3xl md:text-4xl font-bold mb-1">∞</div>
                 <div className="text-sm text-muted-foreground">Self-Hostable</div>
               </div>
-              <div className="group">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/10 mb-3 group-hover:bg-purple-500/20 transition-colors">
+              <div className="group p-6 rounded-2xl bg-card border border-border/50 hover:border-purple-500/30 transition-all duration-300 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Shield className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
-                <div className="text-3xl md:text-4xl font-bold mb-2">✓</div>
+                <div className="text-3xl md:text-4xl font-bold mb-1">✓</div>
                 <div className="text-sm text-muted-foreground">Crypto Verified</div>
               </div>
             </div>

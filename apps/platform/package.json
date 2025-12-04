@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"next dev -p 5100\" \"pnpm jobs:start\" --names \"WEB,JOBS\" --prefix-colors \"blue,magenta\"",
+    "dev:platform": "next dev -p 5100",
     "build": "next build",
     "start": "next start -p 5100",
     "lint": "eslint",

@@ -10,6 +10,7 @@
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:platform": "turbo run dev:platform",
     "start": "turbo run start",
     "build": "turbo run build",
     "lint": "turbo run lint",
