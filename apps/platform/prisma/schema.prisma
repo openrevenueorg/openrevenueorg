@@ -113,6 +113,7 @@ model Startup {
   logo        String?
   categoryId  String?
   foundedDate DateTime?
+  country     String?     // ISO 2-letter country code
   currency    String      @default("USD") // Default currency for this startup
   isPublished Boolean     @default(false)
   publishedAt DateTime?   // When it was published

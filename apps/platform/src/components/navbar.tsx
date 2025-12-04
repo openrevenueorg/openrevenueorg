@@ -26,12 +26,12 @@ export function Navbar() {
   };
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <header className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="font-bold text-2xl">
           OpenRevenue
         </Link>
-        
+
         <nav className="hidden md:flex gap-6 items-center">
           <Link href="/leaderboard" className="text-sm hover:text-primary transition-colors">
             Leaderboard
@@ -39,14 +39,26 @@ export function Navbar() {
           <Link href="/explore" className="text-sm hover:text-primary transition-colors">
             Explore
           </Link>
-          <Link href="/about" className="text-sm hover:text-primary transition-colors">
-            About
+          <Link href="/stats" className="text-sm hover:text-primary transition-colors">
+            Stats
+          </Link>
+          <Link href="/acquire" className="text-sm hover:text-primary transition-colors">
+            Acquire
+          </Link>
+          <Link href="/game" className="text-sm hover:text-primary transition-colors">
+            Game
+          </Link>
+          <Link href="/open" className="text-sm hover:text-primary transition-colors">
+            Open Feed
+          </Link>
+          <Link href="/championship" className="text-sm hover:text-primary transition-colors">
+            Olympics
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          
+
           {isPending ? (
             <div className="h-9 w-9 animate-pulse rounded-full bg-muted" />
           ) : session?.user ? (
@@ -57,14 +69,14 @@ export function Navbar() {
                   className="relative h-10 w-10 rounded-full"
                 >
                   <Avatar>
-                    <AvatarImage 
-                      src={session.user.image || undefined} 
-                      alt={session.user.name || 'User'} 
+                    <AvatarImage
+                      src={session.user.image || undefined}
+                      alt={session.user.name || 'User'}
                     />
                     <AvatarFallback>
-                      {session.user.name?.charAt(0)?.toUpperCase() || 
-                       session.user.email?.charAt(0)?.toUpperCase() || 
-                       'U'}
+                      {session.user.name?.charAt(0)?.toUpperCase() ||
+                        session.user.email?.charAt(0)?.toUpperCase() ||
+                        'U'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
