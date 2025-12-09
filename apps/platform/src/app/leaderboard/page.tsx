@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Trophy, ChevronLeft, ChevronRight, Filter, SlidersHorizontal } from 'lucide-react';
+import { Trophy, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { TrustBadge } from '@/components/ui/trust-badge';
 import { ProviderBadge } from '@/components/ui/provider-badge';
 import { Navbar } from '@/components/navbar';
@@ -373,12 +373,12 @@ export default async function LeaderboardPage({
                         <div className="md:col-span-1 text-center">
                           <div
                             className={`text-2xl font-bold ${startup.rank === 1
-                                ? 'text-yellow-500'
-                                : startup.rank === 2
-                                  ? 'text-gray-400'
-                                  : startup.rank === 3
-                                    ? 'text-orange-600'
-                                    : 'text-muted-foreground'
+                              ? 'text-yellow-500'
+                              : startup.rank === 2
+                                ? 'text-gray-400'
+                                : startup.rank === 3
+                                  ? 'text-orange-600'
+                                  : 'text-muted-foreground'
                               }`}
                           >
                             {startup.rank ? `#${startup.rank}` : '-'}
@@ -493,8 +493,8 @@ export default async function LeaderboardPage({
                 <Link
                   href={page > 1 ? `${buildFilterUrl()}${buildFilterUrl().includes('?') ? '&' : '?'}page=${page - 1}` : '#'}
                   className={`flex items-center gap-1 px-4 py-2 rounded-lg border transition-colors ${page <= 1
-                      ? 'opacity-50 cursor-not-allowed pointer-events-none'
-                      : 'hover:bg-muted'
+                    ? 'opacity-50 cursor-not-allowed pointer-events-none'
+                    : 'hover:bg-muted'
                     }`}
                   aria-label="Previous page"
                 >
@@ -520,8 +520,8 @@ export default async function LeaderboardPage({
                         key={pageNum}
                         href={`${buildFilterUrl()}${buildFilterUrl().includes('?') ? '&' : '?'}page=${pageNum}`}
                         className={`px-3 py-2 rounded-lg border transition-colors ${page === pageNum
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'hover:bg-muted'
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'hover:bg-muted'
                           }`}
                         aria-label={`Go to page ${pageNum}`}
                         aria-current={page === pageNum ? 'page' : undefined}
@@ -535,8 +535,8 @@ export default async function LeaderboardPage({
                 <Link
                   href={page < totalPages ? `${buildFilterUrl()}${buildFilterUrl().includes('?') ? '&' : '?'}page=${page + 1}` : '#'}
                   className={`flex items-center gap-1 px-4 py-2 rounded-lg border transition-colors ${page >= totalPages
-                      ? 'opacity-50 cursor-not-allowed pointer-events-none'
-                      : 'hover:bg-muted'
+                    ? 'opacity-50 cursor-not-allowed pointer-events-none'
+                    : 'hover:bg-muted'
                     }`}
                   aria-label="Next page"
                 >

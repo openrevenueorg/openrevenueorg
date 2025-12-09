@@ -438,7 +438,7 @@ export default async function HomePage() {
 
                 <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
                   The open-source alternative to TrustMRR. Verify and showcase your
-                  startup's revenue transparently with cryptographic verification.
+                  startup&apos;s revenue transparently with cryptographic verification.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-fade-in-up delay-300">

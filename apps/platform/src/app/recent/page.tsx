@@ -74,7 +74,7 @@ export default async function RecentPage() {
                 </div>
 
                 <div className="max-w-3xl mx-auto space-y-8">
-                    {startups.map((startup, index) => (
+                    {startups.map((startup) => (
                         <div key={startup.id} className="relative pl-8 pb-8 border-l border-muted last:pb-0 last:border-0">
                             {/* Timeline dot */}
                             <div className="absolute left-[-5px] top-0 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background" />

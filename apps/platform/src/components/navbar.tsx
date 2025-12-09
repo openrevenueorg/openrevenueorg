@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useSession, signOut } from '@/lib/auth-client';
-import { Menu, X, TrendingUp, BarChart3, ShoppingBag, Gamepad2, Radio, Trophy, Mail, Clock } from 'lucide-react';
+import { Menu, X, TrendingUp, BarChart3, ShoppingBag, Radio, Trophy } from 'lucide-react';
 import { useState } from 'react';
 
 const navLinks = [

@@ -2,11 +2,11 @@
 
 import { Navbar } from '@/components/navbar';
 import { FooterElement } from '@/components/footer';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Mail, TrendingUp, DollarSign, Trophy, Sparkles, Check } from 'lucide-react';
+import { TrendingUp, DollarSign, Trophy, Sparkles, Check } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -78,7 +78,7 @@ export default function NewsletterPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-muted-foreground">
-                                    We track velocity, not just total revenue. Discover who's scaling fast right now.
+                                    We track velocity, not just total revenue. Discover who&apos;s scaling fast right now.
                                 </p>
                             </CardContent>
                         </Card>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { BuiltBy } from "@/components/built-by";
-import { SiReact, SiReactHex, SiGithub } from '@icons-pack/react-simple-icons';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import { ExternalLink, Mail, Twitter } from 'lucide-react';
 
 export function FooterElement() {
