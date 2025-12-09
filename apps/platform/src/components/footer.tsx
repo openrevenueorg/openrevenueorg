@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { BuiltBy } from "@/components/built-by";
-import { Github, ExternalLink, Mail, Twitter } from 'lucide-react';
+import { SiReact, SiReactHex, SiGithub } from '@icons-pack/react-simple-icons';
+import { ExternalLink, Mail, Twitter } from 'lucide-react';
 
 export function FooterElement() {
   return (
@@ -32,7 +33,7 @@ export function FooterElement() {
                 rel="noopener"
                 className="w-10 h-10 rounded-xl bg-muted hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-200"
               >
-                <Github className="h-5 w-5" />
+                <SiGithub size={5} />
               </Link>
               <Link
                 href="https://twitter.com/openrevenue"
@@ -41,12 +42,14 @@ export function FooterElement() {
                 className="w-10 h-10 rounded-xl bg-muted hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-200"
               >
                 <Twitter className="h-5 w-5" />
+                {/* <SiTwitter className="h-5 w-5"  /> */}
               </Link>
               <Link
                 href="mailto:hello@openrevenue.org"
                 className="w-10 h-10 rounded-xl bg-muted hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-200"
               >
                 <Mail className="h-5 w-5" />
+                {/* <SiMail  size={5} /> */}
               </Link>
             </div>
           </div>

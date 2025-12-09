@@ -21,7 +21,7 @@ const navLinks = [
   { href: '/leaderboard', label: 'Leaderboard', icon: TrendingUp },
   { href: '/stats', label: 'Stats', icon: BarChart3 },
   { href: '/acquire', label: 'Acquire', icon: ShoppingBag },
-  { href: '/game', label: 'Game', icon: Gamepad2 },
+  // { href: '/game', label: 'Game', icon: Gamepad2 },
   { href: '/open', label: 'Feed', icon: Radio },
   { href: '/championship', label: 'Olympics', icon: Trophy },
 ];
@@ -72,6 +72,15 @@ export function Navbar() {
                   </Link>
                 );
               })}
+              <Link
+                key='gamespace'
+                href='https://gamespace.openrevenue.org'
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/50`}
+              >
+                Game
+              </Link>
             </div>
 
             {/* Right Side Actions */}
