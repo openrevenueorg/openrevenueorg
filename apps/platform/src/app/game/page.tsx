@@ -3,23 +3,16 @@
 import { Navbar } from '@/components/navbar';
 import { FooterElement } from '@/components/footer';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Trophy, DollarSign, RefreshCw, Check, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
-import { getStartupLogoUrl } from '@/lib/avatar';
+
+import { getGameStartups, type GameStartup } from './actions';
 
 // Mock data for game - in real app would fetch from API
-const MOCK_STARTUPS = [
-    { id: '1', name: 'Typefully', revenue: 50000, logo: null, slug: 'typefully' },
-    { id: '2', name: 'Bannerbear', revenue: 45000, logo: null, slug: 'bannerbear' },
-    { id: '3', name: 'Plausible', revenue: 120000, logo: null, slug: 'plausible' },
-    { id: '4', name: 'Carrd', revenue: 80000, logo: null, slug: 'carrd' },
-    { id: '5', name: 'Gumroad', revenue: 1000000, logo: null, slug: 'gumroad' },
-    { id: '6', name: 'Tailwind UI', revenue: 200000, logo: null, slug: 'tailwind-ui' },
-];
+
 
 function formatCurrency(amount: number) {
     return new Intl.NumberFormat('en-US', {
@@ -32,34 +25,58 @@ function formatCurrency(amount: number) {
 export default function GamePage() {
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
-    const [round, setRound] = useState(1);
-    const [startups, setStartups] = useState<any[]>([]);
+
+    const [, setRound] = useState(1);
+    const [allStartups, setAllStartups] = useState<GameStartup[]>([]);
+    const [roundStartups, setRoundStartups] = useState<GameStartup[]>([]);
     const [revealed, setRevealed] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const startNewRound = () => {
-        setLoading(true);
-        // Pick 2 random startups
-        const shuffled = [...MOCK_STARTUPS].sort(() => 0.5 - Math.random());
-        setStartups(shuffled.slice(0, 2));
+    const getNewRound = useCallback((startups: GameStartup[]) => {
+        if (startups.length < 2) return [];
+        return [...startups].sort(() => 0.5 - Math.random()).slice(0, 2);
+    }, []);
+
+    const startNewRound = useCallback(() => {
+        if (allStartups.length < 2) return;
+        setRoundStartups(getNewRound(allStartups));
         setRevealed(false);
-        setLoading(false);
-    };
+    }, [allStartups, getNewRound]);
+
+    const initialized = useRef(false);
 
     useEffect(() => {
-        startNewRound();
-        // Load high score from local storage
-        const savedHighScore = localStorage.getItem('trustmrr_game_highscore');
-        if (savedHighScore) setHighScore(parseInt(savedHighScore));
-    }, []);
+        // Use setTimeout to avoid synchronous state update warning in useEffect
+        const timer = setTimeout(async () => {
+            if (!initialized.current) {
+                try {
+                    const fetchedStartups = await getGameStartups();
+                    setAllStartups(fetchedStartups);
+                    setRoundStartups(getNewRound(fetchedStartups));
+                } catch (error) {
+                    console.error('Failed to load game data', error);
+                    toast.error('Failed to load game data');
+                } finally {
+                    setLoading(false);
+                    initialized.current = true;
+                }
+            }
+
+            // Load high score from local storage
+            const savedHighScore = localStorage.getItem('trustmrr_game_highscore');
+            if (savedHighScore) setHighScore(parseInt(savedHighScore));
+        }, 0);
+
+        return () => clearTimeout(timer);
+    }, [getNewRound]);
 
     const handleGuess = (selectedIndex: number) => {
         if (revealed) return;
 
         setRevealed(true);
         const otherIndex = selectedIndex === 0 ? 1 : 0;
-        const selected = startups[selectedIndex];
-        const other = startups[otherIndex];
+        const selected = roundStartups[selectedIndex];
+        const other = roundStartups[otherIndex];
 
         if (selected.revenue >= other.revenue) {
             // Correct
@@ -113,9 +130,13 @@ export default function GamePage() {
                     </div>
                 </div>
 
-                {loading || startups.length < 2 ? (
-                    <div className="flex justify-center py-20">
+                {loading || roundStartups.length < 2 ? (
+                    <div className="flex justify-center py-20 flex-col items-center gap-4">
                         <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                        {loading && <p className="text-muted-foreground">Loading startups...</p>}
+                        {!loading && roundStartups.length < 2 && (
+                            <p className="text-muted-foreground">Not enough data to start the game.</p>
+                        )}
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-center relative">
@@ -126,11 +147,11 @@ export default function GamePage() {
                             </div>
                         </div>
 
-                        {startups.map((startup, index) => (
+                        {roundStartups.map((startup, index) => (
                             <Card
                                 key={startup.id}
                                 className={`cursor-pointer transition-all hover:scale-105 border-2 ${revealed
-                                    ? startup.revenue >= startups[index === 0 ? 1 : 0].revenue
+                                    ? startup.revenue >= roundStartups[index === 0 ? 1 : 0].revenue
                                         ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                         : 'border-red-500 bg-red-50 dark:bg-red-900/20'
                                     : 'hover:border-primary'
@@ -139,18 +160,14 @@ export default function GamePage() {
                             >
                                 <CardContent className="p-8 text-center flex flex-col items-center gap-6">
                                     <Avatar className="h-24 w-24">
-                                        <AvatarImage src={getStartupLogoUrl({
-                                            logo: startup.logo,
-                                            name: startup.name,
-                                            slug: startup.slug
-                                        })} />
+                                        <AvatarImage src={startup.logo || undefined} />
                                         <AvatarFallback className="text-2xl">{startup.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                                     </Avatar>
 
                                     <div>
                                         <h2 className="text-3xl font-bold mb-2">{startup.name}</h2>
                                         {revealed ? (
-                                            <div className={`text-2xl font-bold flex items-center justify-center gap-2 ${startup.revenue >= startups[index === 0 ? 1 : 0].revenue ? 'text-green-600' : 'text-red-600'
+                                            <div className={`text-2xl font-bold flex items-center justify-center gap-2 ${startup.revenue >= roundStartups[index === 0 ? 1 : 0].revenue ? 'text-green-600' : 'text-red-600'
                                                 }`}>
                                                 <DollarSign className="h-6 w-6" />
                                                 {formatCurrency(startup.revenue)}
@@ -164,7 +181,7 @@ export default function GamePage() {
 
                                     {revealed && (
                                         <div className="absolute top-4 right-4">
-                                            {startup.revenue >= startups[index === 0 ? 1 : 0].revenue ? (
+                                            {startup.revenue >= roundStartups[index === 0 ? 1 : 0].revenue ? (
                                                 <Check className="h-8 w-8 text-green-600" />
                                             ) : (
                                                 <X className="h-8 w-8 text-red-600" />

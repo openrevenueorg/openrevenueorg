@@ -4,7 +4,7 @@ import { FooterElement } from '@/components/footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Trophy, Flag, TrendingUp } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { getStartupLogoUrl } from '@/lib/avatar';
 import Link from 'next/link';
