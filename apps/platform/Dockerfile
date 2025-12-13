@@ -2,14 +2,15 @@
 # Production-ready Dockerfile compatible with VPS, cloud platforms, and CI/CD
 
 FROM node:20-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat openssl
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+# RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
-# Install pnpm with specific version for reproducibility
-RUN npm install -g pnpm
 
 # Copy package files for better layer caching
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
@@ -30,9 +31,6 @@ RUN pnpm prisma generate
 # Build the application
 FROM base AS builder
 WORKDIR /app
-
-# Install pnpm with specific version for reproducibility
-RUN npm install -g pnpm@9.15.4
 
 # Copy root workspace files and dependencies
 COPY --from=deps /app/package.json ./package.json
@@ -71,6 +69,8 @@ ENV NODE_ENV=production
 # Build Next.js application
 RUN pnpm prisma generate
 RUN pnpm build
+# Bundle jobs worker
+RUN npx esbuild src/jobs/index.ts --bundle --platform=node --packages=external --outfile=platform-jobs.js
 
 # Production image
 FROM base AS runner
@@ -83,8 +83,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install pnpm for runtime migrations (if needed)
-RUN npm install -g pnpm
+# Install dumb-init for secure signal handling
+# RUN apk add --no-cache dumb-init
 
 # Copy Prisma schema and migrations for runtime migrations
 # Note: Prisma client is already included in the standalone build's node_modules
@@ -101,14 +101,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/.next/standalone ./
 # Copy static and public files - check both root and monorepo structure locations
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/.next/static ./apps/platform/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/public ./apps/platform/public
-
-# Also copy node_modules from builder to ensure all dependencies are available
-# This is a fallback in case standalone doesn't include everything
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/platform-jobs.js ./platform-jobs.js
+RUN ls -l ./platform-jobs.js
 
 # Copy entrypoint script for database migrations (from builder stage)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/platform/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
+# RUN cat ./docker-entrypoint.sh | grep "platform-jobs"
 
 USER nextjs
 
@@ -116,7 +115,6 @@ EXPOSE 5100
 
 ENV PORT=5100
 ENV HOSTNAME="0.0.0.0"
-
 
 # Health check for production deployments 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \

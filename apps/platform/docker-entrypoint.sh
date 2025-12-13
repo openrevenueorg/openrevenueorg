@@ -83,14 +83,22 @@ start_web() {
 }
 
 start_jobs() {
-  echo "✅ Starting background jobs via pnpm jobs:start"
-  cd /app/apps/platform
-
-  if command -v pnpm >/dev/null 2>&1; then
-    exec pnpm jobs:start
+  echo "✅ Starting background jobs..."
+  
+  if [ -f "./platform-jobs.js" ]; then
+    echo "Found optimized platform-jobs.js, running with node..."
+    exec node platform-jobs.js
+  elif [ -f "/app/platform-jobs.js" ]; then
+     echo "Found optimized platform-jobs.js in /app, running with node..."
+     exec node /app/platform-jobs.js
   else
-    echo "⚠️  pnpm not found in PATH, attempting with npx..."
-    exec npx pnpm jobs:start
+    echo "⚠️  platform-jobs.js not found, falling back to pnpm/src (might fail in production)..."
+    cd /app/apps/platform
+    if command -v pnpm >/dev/null 2>&1; then
+      exec pnpm jobs:start
+    else
+      exec npx pnpm jobs:start
+    fi
   fi
 }
 

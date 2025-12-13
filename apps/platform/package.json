@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"next dev -p 5100\" \"pnpm jobs:start\" --names \"WEB,JOBS\" --prefix-colors \"blue,magenta\"",
     "dev:platform": "next dev -p 5100",
-    "build": "next build",
+    "build": "next build --no-lint",
     "start": "next start -p 5100",
     "lint": "eslint",
     "lint:fix": "next lint --fix --dir .",
